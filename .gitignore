@@ -1,0 +1,6 @@
+.env
+.idea/**
+docs/build/**
+notes/logs/**
+notes/output/**
+notes/debug.log

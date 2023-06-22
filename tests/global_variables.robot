@@ -1,0 +1,2 @@
+*** Variables ***
+${BASE_DIR}    ${../}

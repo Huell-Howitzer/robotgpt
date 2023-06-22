@@ -1,0 +1,14 @@
+# Use the official Python base image for development
+FROM python:3.10
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the project files into the container
+COPY . /app
+
+# Install project dependencies
+RUN pip install -r requirements.txt
+
+# Set the entrypoint command to start your application or desired development process
+ENTRYPOINT ["robot", "main.robot"]

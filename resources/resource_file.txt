@@ -1,0 +1,2 @@
+*** Settings ***
+Resource    ${BASE_DIR}/resources/resource_file.txt

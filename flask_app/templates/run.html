@@ -4,9 +4,21 @@
   <h1>Program Runner</h1>
   <form method="post" action="/run">
     <div class="field">
-      <label class="label">Input Data</label>
+      <label class="label">Prompt</label>
       <div class="control">
-        <textarea class="textarea" name="input_data" placeholder="Enter input data"></textarea>
+        <textarea class="textarea" name="prompt" placeholder="Enter the prompt">{{ prompt }}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Expected Output</label>
+      <div class="control">
+        <textarea class="textarea" name="expected_output" placeholder="Enter the expected output">{{ expected_output }}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Actual Output</label>
+      <div class="control">
+        <textarea class="textarea" name="actual_output" placeholder="Enter the actual output">{{ actual_output }}</textarea>
       </div>
     </div>
     <div class="field">
@@ -15,5 +27,14 @@
       </div>
     </div>
   </form>
+  {% if expected_output and actual_output %}
+    <div class="field">
+      <label class="label">Similarity</label>
+      <div class="control">
+        <input class="input" type="text" value="{{ similarity }}%" readonly>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
+
 

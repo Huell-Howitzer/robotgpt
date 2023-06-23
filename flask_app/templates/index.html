@@ -1,56 +1,7 @@
-<!-- index.html -->
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-  <title>Flask App with Bulma CSS</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-</head>
-
-<body>
-  <nav class="navbar is-fixed-top">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="/">
-        <!-- Logo or brand name -->
-      </a>
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
-    <div id="navbarMenu" class="navbar-menu">
-      <div class="navbar-start">
-        <a class="navbar-item" href="/">Home</a>
-        <a class="navbar-item" href="/run">Run Program</a>
-        <a class="navbar-item" href="/reports/report.html">Robot Framework Report</a>
-        <!-- Add more sidenav links here -->
-      </div>
-    </div>
-  </nav>
-
-  <section class="hero is-primary is-fullheight">
-    <div class="hero-body">
-      <div class="container has-text-centered">
-        <h1 class="title">Welcome to Flask App with Bulma CSS</h1>
-        <h2 class="subtitle">Your App Subtitle</h2>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // Toggle the sidenav burger icon and menu
-    document.addEventListener('DOMContentLoaded', () => {
-      const burger = document.querySelector('.navbar-burger');
-      const menu = document.querySelector('#navbarMenu');
-      burger.addEventListener('click', () => {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
-      });
-    });
-  </script>
-</body>
-
-</html>
-
+{% block content %}
+<h1>Welcome to My App</h1>
+<!-- Additional content for the home page -->
+{% endblock %}
 

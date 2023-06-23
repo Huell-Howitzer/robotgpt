@@ -1,0 +1,88 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %} {% endblock %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <style>
+    .sidenav {
+      height: 100%;
+      width: 240px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #f5f5f5;
+      overflow-x: hidden;
+      padding-top: 60px;
+    }
+
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #818181;
+      display: block;
+    }
+
+    .sidenav a:hover {
+      color: #000;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 0px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+      <!-- Navbar content goes here -->
+    </nav>
+    <section class="section">
+      <div class="columns">
+        <div class="column is-2">
+          <aside class="sidenav">
+            <p class="menu-label">Navigation</p>
+            <ul class="menu-list">
+              <li>
+                <a href="/">
+                  <span class="icon"><i class="fas fa-home"></i></span> Home
+                </a>
+              </li>
+              <li>
+                <a href="/run">
+                  <span class="icon"><i class="fas fa-play"></i></span> Program Runner
+                </a>
+              </li>
+              <li>
+                <a href="/reports" target="_blank">
+                  <span class="icon"><i class="fas fa-chart-bar"></i></span> Reports
+                </a>
+              </li>
+              <li>
+                <a href="/about">
+                  <span class="icon"><i class="fas fa-info"></i></span> About
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('serve_docs', filename='index.html') }}">
+                    <span class="icon"><i class="fas fa-book"></i></span> Documentation
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column is-10">
+          <div class="container">
+            {% block content %}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

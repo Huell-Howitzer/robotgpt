@@ -1,7 +1,19 @@
-<!-- run.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- Content for the program runner page -->
+  <h1>Program Runner</h1>
+  <form method="post" action="/run">
+    <div class="field">
+      <label class="label">Input Data</label>
+      <div class="control">
+        <textarea class="textarea" name="input_data" placeholder="Enter input data"></textarea>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <button class="button is-primary" type="submit">Run</button>
+      </div>
+    </div>
+  </form>
 {% endblock %}
 

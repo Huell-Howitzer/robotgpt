@@ -20,10 +20,6 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Create your own built-ins namespace
-my_builtins = dict(safe_builtins)
-my_builtins['open'] = open  # Add 'open' to the namespace
-
 
 def format_code(code):
     """
@@ -81,7 +77,6 @@ def extract_code_from_chat_model(prompt_file):
     Extract code from chat model response
     """
     print("Extracting code from chat model response...")
-    openai.api_key = "YOUR_OPEN_AI_KEY"
     model = "gpt-3.5-turbo"
     prompt = read_file(prompt_file)
 
@@ -104,7 +99,7 @@ def extract_code_from_chat_model(prompt_file):
 
 
 def main():
-    prompt_file = "./notes/prompt.txt"
+    prompt_file = "./data/input/prompt.txt"
     code = extract_code_from_chat_model(prompt_file)
 
     formatted_code = format_code(code)
@@ -116,3 +111,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

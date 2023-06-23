@@ -1,17 +1,21 @@
-# Use an official Python runtime as the base image
-FROM python:3.10
+# Use the base Python image
+FROM python:3.10-slim
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the project files into the container
-COPY . /app
+# Copy the necessary files
+COPY requirements.txt .
+COPY engine /app/engine
+COPY flask_app /app/flask_app
 
-# Install project dependencies
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Change working directory to 'notes'
-WORKDIR /app/notes
+# Expose the necessary port
+EXPOSE 5000
 
-# Specify the command to run when the container starts
-CMD [ "python", "howto.py" ]
+# Set the entry point and command to start the Flask app
+CMD ["python", "-m", "flask_app.app"]
+
+

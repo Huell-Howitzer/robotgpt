@@ -15,3 +15,8 @@ robot==20071211
 tqdm==4.65.0
 urllib3==2.0.3
 yarl==1.9.2
+
+black~=23.3.0
+termcolor~=2.3.0
+nltk~=3.8.1
+Flask~=2.3.2

@@ -19,7 +19,7 @@ def index():
 @app.route('/run', methods=['GET', 'POST'])
 def run():
     if request.method == 'POST':
-        prompt = request.form['input_data']
+        prompt = request.form['prompt']
         expected_output = request.form['expected_output']
         actual_output = engine.execute_engine_logic(prompt)
 

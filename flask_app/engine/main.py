@@ -65,7 +65,7 @@ class Engine:
             print(f"Error while writing the file: {str(e)}")
             return False
 
-    def handle_request(self, prompt):
+    def handle_request(self, prompt, expected_output):
         """
         Handle request
         """
@@ -86,15 +86,18 @@ class Engine:
                 "Content-Type" : "application/json"
             }
 
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt},
+                {"role": "user", "content": f"Here is the expected output of the program: {expected_output}"}
+            ]
+
             response = requests.post(
                 "https://api.openai.com/v1/chat/completions",
                 headers=headers,
                 json={
                     "model"      : "gpt-3.5-turbo-16k-0613",
-                    "messages"   : [
-                        {"role": "system", "content": "You are a helpful assistant."},
-                        {"role": "user", "content": prompt}
-                    ],
+                    "messages"   : messages,
                     "max_tokens" : 8242,
                     "temperature": 1.0
                 }
@@ -106,7 +109,7 @@ class Engine:
             print(f"Error while handling the request: {str(e)}")
             return None
 
-    def extract_code_from_chat_model(self, prompt):
+    def extract_code_from_chat_model(self, prompt, expected_output):
         """
         Extract code from chat model response
         """
@@ -115,7 +118,7 @@ class Engine:
         file_path = self.write_file(self.prompt_file, prompt)
 
         if file_path:
-            response = self.handle_request(prompt)
+            response = self.handle_request(prompt, expected_output)
             content = response['choices'][0]['message']['content']
 
             # Extract Python code using regular expression
@@ -130,9 +133,9 @@ class Engine:
         else:
             return None
 
-    def execute_engine_logic(self, prompt_file):
+    def execute_engine_logic(self, prompt_file, expected_output):
         try:
-            code = self.extract_code_from_chat_model(prompt_file)
+            code = self.extract_code_from_chat_model(prompt_file, expected_output)
             formatted_code = self.format_code(code)
 
             print("Executing the code...")
@@ -164,16 +167,17 @@ class Engine:
             # Handle any errors that occur during execution
             error_message = str(e)
             return f"An error occurred during execution: {error_message}"
-    def generate_code(self, prompt):
+
+    def generate_code(self, prompt, expected_output):
         """
         Generate Python code using ChatGPT
         """
         print("Generating code...")
         try:
-            response = self.handle_request(prompt)
+            response = self.handle_request(prompt, expected_output)
 
             if response:
-                code = self.extract_code_from_chat_model(prompt)
+                code = self.extract_code_from_chat_model(prompt, expected_output)
                 print("Generated code:\n", code)
                 return code
             else:
@@ -192,8 +196,8 @@ class Engine:
             captured_output = StringIO()
             sys.stdout = captured_output
 
-            # Evaluate the code and capture the output
-            eval(code)
+            # Execute the code
+            exec(code)
 
             # Get the captured output
             output = captured_output.getvalue()
@@ -204,11 +208,8 @@ class Engine:
         except Exception as e:
             # Handle any errors that occur during execution
             error_message = str(e)
+            error_info = sys.exc_info()
+            error_line = error_info[2].tb_lineno
             print(f"[execute_code] Error while executing code:")
-            print(error_message)
-            return f"An error occurred during execution: {error_message}"
-
-
-
-
-
+            print(f"Line {error_line}: {error_message}")
+            return f"An error occurred during execution: Line {error_line}, {error_message}"

@@ -19,5 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose the necessary port
 EXPOSE 5000
 
+# Set up the volume for live code reloading
+VOLUME /app
+
 # Set the entry point and command to start the Flask app
 CMD ["python", "-m", "flask_app.app"]

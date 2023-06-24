@@ -20,8 +20,6 @@ def index():
 
 
 @app.route('/run', methods=['GET', 'POST'])
-@app.route('/run', methods=['GET', 'POST'])
-@app.route('/run', methods=['GET', 'POST'])
 def run():
     # Set default values
     prompt = ""
@@ -36,7 +34,7 @@ def run():
         expected_output = request.form.get('expected_output')
 
         # Generate code using ChatGPT
-        generated_code = engine.generate_code(prompt)
+        generated_code = engine.generate_code(prompt, expected_output)
 
         # Check if generated_code is not None
         if generated_code is not None:
@@ -51,14 +49,14 @@ def run():
 
 
 
-
 def get_formatted_code():
     try:
         # Run the engine/main.py script and capture the output
         output = subprocess.check_output(['python', 'engine/main.py', prompt_file])
+        expected_output = request.form.get('expected_output')
 
         # Extract the code from the output
-        code = engine.extract_code_from_chat_model(output)
+        code = engine.extract_code_from_chat_model(output, expected_output)
 
         # Format the code
         formatted_code = engine.format_code(code)
@@ -71,7 +69,7 @@ def get_formatted_code():
         return f"An error occurred during execution: {error_message}"
 
 
-@app.route('/robot_framework/reports')
+@app.route('/robot_framework/reports/report')
 def serve_report():
     reports_dir = os.path.join(app.root_path, 'robot_framework', 'reports')
     filename = "report.html"
@@ -81,6 +79,17 @@ def serve_report():
         return send_file(file_path)
     else:
         return "Report file not found."
+
+@app.route('/robot_framework/reports/logs')
+def serve_logs():
+    logs_dir = os.path.join(app.root_path, 'robot_framework', 'reports')
+    filename = "logs.html"
+    file_path = os.path.join(logs_dir, filename)
+
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    else:
+        return "Log file not found."
 
 
 @app.route('/docs/<path:filename>')

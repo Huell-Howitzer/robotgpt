@@ -1,8 +1,3 @@
-
-
-
-
-
 Robot GPT
 =========
 .. raw:: html

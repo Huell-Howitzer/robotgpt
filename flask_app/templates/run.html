@@ -16,11 +16,18 @@
       </div>
     </div>
     <div class="field">
-      <label class="label">Actual Output</label>
-      <div class="control">
-        <textarea class="textarea" name="actual_output" readonly>{{ actual_output }}</textarea>
+        <label class="label">Generated Code</label>
+        <div class="control">
+            <pre><code>{{ generated_code }}</code></pre>
+        </div>
       </div>
+    <div class="field">
+        <label class="label">Actual Output</label>
+        <div class="control">
+            <textarea class="textarea" name="actual_output" readonly>{{ code_output }}</textarea>
     </div>
+</div>
+
     <div class="field">
       <div class="control">
         <button class="button is-primary" type="submit">Run</button>
@@ -35,7 +42,14 @@
       </div>
     </div>
   {% endif %}
+  <div class="field">
+    <label class="label">API Key</label>
+    <div class="control">
+      <input class="input" type="text" value="{{ api_key }}" readonly>
+    </div>
+  </div>
 {% endblock %}
+
 
 
 

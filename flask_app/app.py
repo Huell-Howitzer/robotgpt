@@ -1,15 +1,18 @@
 import os
 import subprocess
+import dotenv
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
 from engine.main import Engine
 
 app = Flask(__name__, template_folder='templates')
 
 # Get the absolute path to the prompt.txt file
+load_dotenv()
 prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'prompt.txt'))
-
-engine = Engine()
-
+api_key = os.getenv("OPENAI_API_KEY")
+print(f"API Key: {api_key}")
+engine = Engine(api_key)
 
 @app.route('/')
 def index():
@@ -17,16 +20,36 @@ def index():
 
 
 @app.route('/run', methods=['GET', 'POST'])
+@app.route('/run', methods=['GET', 'POST'])
+@app.route('/run', methods=['GET', 'POST'])
 def run():
-    if request.method == 'POST':
-        prompt = request.form['prompt']
-        expected_output = request.form['expected_output']
-        actual_output = engine.execute_engine_logic(prompt)
+    # Set default values
+    prompt = ""
+    expected_output = ""
+    generated_code = ""
+    code_output = ""
+    similarity = None
+    api_key = engine.api_key
 
-        similarity = engine.calculate_similarity(expected_output, actual_output)
-        return render_template('run.html', prompt=prompt, expected_output=expected_output, similarity=similarity)
-    else:
-        return render_template('run.html')
+    if request.method == 'POST':
+        prompt = request.form.get('prompt')
+        expected_output = request.form.get('expected_output')
+
+        # Generate code using ChatGPT
+        generated_code = engine.generate_code(prompt)
+
+        # Check if generated_code is not None
+        if generated_code is not None:
+            # Execute the generated code and capture its output
+            code_output = engine.execute_code(generated_code)
+
+            # Check if code_output is not None
+            if code_output is not None:
+                similarity = engine.calculate_similarity(expected_output, code_output)
+
+    return render_template('run.html', prompt=prompt, expected_output=expected_output, similarity=similarity, generated_code=generated_code, code_output=code_output, api_key=api_key)
+
+
 
 
 def get_formatted_code():

@@ -15,9 +15,17 @@ Installation
 
 1. Clone the repository:
 
+Using ssh
    .. code-block:: bash
 
-      git clone <repository_url>
+      git clone git@github.com:Huell-Howitzer/robotgpt.git
+
+or:
+
+using https
+  .. code-block:: bash
+
+      git clone https://github.com/Huell-Howitzer/robotgpt.git
 
 2. Build the Docker image:
 

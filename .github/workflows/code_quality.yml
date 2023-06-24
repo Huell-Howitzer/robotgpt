@@ -1,4 +1,4 @@
-- name: 'Qodana Scan'
+- name: Qodana Scan
   uses: JetBrains/qodana-action@v2023.1.0
   env:
      QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}

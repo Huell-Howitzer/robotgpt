@@ -3,6 +3,3 @@
 notes/logs/**
 notes/output/**
 notes/debug.log
-
-
-flask_app/config.py

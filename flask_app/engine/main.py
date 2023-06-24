@@ -35,7 +35,7 @@ class Engine:
         """
         Calculate similarity between two strings
         """
-        return SequenceMatcher(None, a, b).ratio()
+        return SequenceMatcher(None, a, b).ratio() * 100
 
     def read_file(self, file_path):
         """

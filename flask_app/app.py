@@ -1,16 +1,15 @@
 import os
 import subprocess
-import openai
-
-from config import OPENAI_API_KEY
 from flask import Flask, render_template, request, send_from_directory, send_file
+from engine.main import Engine
 
 app = Flask(__name__, template_folder='templates')
 
 # Get the absolute path to the prompt.txt file
 prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'prompt.txt'))
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+engine = Engine()
+
 
 @app.route('/')
 def index():
@@ -20,35 +19,33 @@ def index():
 @app.route('/run', methods=['GET', 'POST'])
 def run():
     if request.method == 'POST':
-        input_data = request.form['input_data']
+        prompt = request.form['input_data']
+        expected_output = request.form['expected_output']
+        actual_output = engine.execute_engine_logic(prompt)
 
-        # Save the input data to the file
-        with open(prompt_file, 'w') as file:
-            file.write(input_data)
-
-        # Execute the engine logic with the updated input data
-        result = execute_engine_logic()
-
-        # Return the results or redirect to a results page
-        return render_template('results.html', result=result)
+        similarity = engine.calculate_similarity(expected_output, actual_output)
+        return render_template('run.html', prompt=prompt, expected_output=expected_output, similarity=similarity)
     else:
         return render_template('run.html')
 
 
-def execute_engine_logic():
+def get_formatted_code():
     try:
         # Run the engine/main.py script and capture the output
-        result = subprocess.check_output(['python', 'engine/main.py']).decode().strip()
+        output = subprocess.check_output(['python', 'engine/main.py', prompt_file])
 
-        # Print the entire output to stdout
-        print(result)
+        # Extract the code from the output
+        code = engine.extract_code_from_chat_model(output)
 
-        return "Hello, world!"  # Replace with the desired output text
+        # Format the code
+        formatted_code = engine.format_code(code)
+
+        # Return the formatted code
+        return formatted_code
     except Exception as e:
         # Handle any errors that occur during execution
         error_message = str(e)
         return f"An error occurred during execution: {error_message}"
-
 
 
 @app.route('/robot_framework/reports')
@@ -61,8 +58,6 @@ def serve_report():
         return send_file(file_path)
     else:
         return "Report file not found."
-
-
 
 
 @app.route('/docs/<path:filename>')
@@ -78,4 +73,5 @@ def about():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
 

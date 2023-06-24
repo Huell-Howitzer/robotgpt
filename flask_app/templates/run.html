@@ -18,7 +18,7 @@
     <div class="field">
       <label class="label">Actual Output</label>
       <div class="control">
-        <textarea class="textarea" name="actual_output" placeholder="Enter the actual output">{{ actual_output }}</textarea>
+        <textarea class="textarea" name="actual_output" readonly>{{ actual_output }}</textarea>
       </div>
     </div>
     <div class="field">
@@ -27,7 +27,7 @@
       </div>
     </div>
   </form>
-  {% if expected_output and actual_output %}
+  {% if similarity %}
     <div class="field">
       <label class="label">Similarity</label>
       <div class="control">
@@ -36,5 +36,8 @@
     </div>
   {% endif %}
 {% endblock %}
+
+
+
 
 

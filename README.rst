@@ -1,10 +1,20 @@
-.. image:: https://github.com/Huell-Howitzer/robotgpt/actions/workflows/docker-image.yml/badge.svg?branch=main
-    :alt: Docker Image CI
-    :align: center
-    :target: https://github.com/Huell-Howitzer/robotgpt/actions/workflows/docker-image.yml
+
+
+
+
 
 Robot GPT
 =========
+.. raw:: html
+
+   <p>
+   <img src="https://github.com/Huell-Howitzer/robotgpt/actions/workflows/docker-image.yml/badge.svg?branch=main" alt="Docker Image CI" align="left">
+   <img src="https://github.com/Huell-Howitzer/robotgpt/actions/workflows/Qodana.yml/badge.svg?branch=main" align="right">
+   <br>
+   </p>
+
+Some text on the line below the images.
+
 
 The purpose of this app is changing by the hour...
 

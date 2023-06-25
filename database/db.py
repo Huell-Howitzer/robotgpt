@@ -1,11 +1,10 @@
-# database.py
+# db.py
 import os
 import sqlite3
 
 class Database:
     def __init__(self):
         self.db_path = 'sqlite.db'
-        self.init_db()
 
     def init_db(self):
         print(f"Database path: {self.db_path}")

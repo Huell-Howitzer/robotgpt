@@ -1,24 +1,19 @@
-import sys
-sys.path.insert(0, '/app')
-
 import os
 import subprocess
 
 from flask import jsonify
 
-import dotenv
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
 
-from flask_app.engine.main import Engine
-from flask_app.engine.database import Database
+from engine.main import Engine
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')
 
 # Get the absolute path to the prompt.txt file
 load_dotenv()
-prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'prompt.txt'))
+prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '', 'data', 'input', 'prompt.txt'))
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
 engine = Engine(api_key)

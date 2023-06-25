@@ -1,17 +1,17 @@
 # engine.py
 import os
-import openai
-import nltk
 import re
-from database import Database
-import sqlite3
-from io import StringIO
 import sys
-from dotenv import load_dotenv
 from difflib import SequenceMatcher
+from io import StringIO
+
 import black
+import nltk
+import openai
 import requests
-from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+from database.db import Database
 
 load_dotenv()
 
@@ -19,7 +19,8 @@ class Engine(Database):
     def __init__(self, api_key):
         super().__init__()
         self.api_key = api_key
-        self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'prompt.txt'))
+        self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '../flask_app', 'data', 'input', 'prompt.txt'))
+        self.database = Database()
         openai.api_key = self.api_key
 
     def format_code(self, code):

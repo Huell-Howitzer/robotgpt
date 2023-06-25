@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, '/app')
+
 import os
 import subprocess
 
@@ -19,7 +22,8 @@ prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'dat
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
 engine = Engine(api_key)
-database = Database()
+database = engine.database
+
 
 @app.route('/')
 def index():

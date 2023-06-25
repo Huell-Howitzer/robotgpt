@@ -7,7 +7,10 @@ from flask_app.engine.database import init_db
 import dotenv
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
-from engine.main import Engine
+
+if __name__ == '__main__':
+    if __name__ == '__main__':
+        from flask_app.engine.main import Engine
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')

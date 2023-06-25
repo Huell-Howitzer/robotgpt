@@ -14,6 +14,7 @@ COPY flask_app/.env .
 COPY flask_app/config.py .
 
 # Install dependencies
+RUN apt-get update && apt-get install -y sqlite3
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the necessary port

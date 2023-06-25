@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - PYTHONPATH=/app
     volumes:
       - .:/app
       - db-data:/app/flask_app/engine

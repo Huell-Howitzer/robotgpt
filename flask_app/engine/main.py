@@ -25,7 +25,7 @@ class Engine:
         """
         Initialize the SQLite database
         """
-        db_path = os.path.join(os.path.dirname(__file__), 'chatgpt.db')
+        db_path = os.path.join(os.path.dirname(__file__), 'sqlite.db')
         if not os.path.exists(db_path):
             conn = sqlite3.connect(db_path)
             conn.execute('''

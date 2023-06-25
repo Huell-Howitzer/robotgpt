@@ -1,0 +1,15 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - db-data:/app/flask_app/engine
+    ports:
+      - 5000:5000
+    command: ["python", "-m", "flask_app.app"]
+
+volumes:
+  db-data:

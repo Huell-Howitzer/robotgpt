@@ -1,7 +1,9 @@
+# engine.py
 import os
 import openai
 import nltk
 import re
+import sqlite3
 from io import StringIO
 import sys
 from dotenv import load_dotenv
@@ -17,6 +19,27 @@ class Engine:
         self.api_key = api_key
         self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'prompt.txt'))
         openai.api_key = self.api_key
+        self.init_db()
+
+    def init_db(self):
+        """
+        Initialize the SQLite database
+        """
+        db_path = os.path.join(os.path.dirname(__file__), 'chatgpt.db')
+        if not os.path.exists(db_path):
+            conn = sqlite3.connect(db_path)
+            conn.execute('''
+            CREATE TABLE interactions (
+                id INTEGER PRIMARY KEY,
+                user_input TEXT,
+                chatgpt_response TEXT,
+                expected_output TEXT,
+                actual_output TEXT,
+                similarity_score REAL,
+                iteration_number INTEGER
+            )
+            ''')
+            conn.close()
 
     def format_code(self, code):
         """
@@ -102,6 +125,14 @@ class Engine:
                 {"role": "user", "content": f"Here is the expected output of the program: {expected_output}"}
             ]
 
+            # Insert the messages into the database before sending the request
+            conn = sqlite3.connect('sqlite.db')
+            conn.execute('''
+            INSERT INTO interactions (user_input, chatgpt_response, expected_output, actual_output, similarity_score, iteration_number)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ''', (str(messages), None, expected_output, None, None, 1))
+            conn.commit()
+
             response = requests.post(
                 "https://api.openai.com/v1/chat/completions",
                 headers=headers,
@@ -112,6 +143,15 @@ class Engine:
                     "temperature": 1.0
                 }
             )
+
+            # Update the database with the response after receiving it
+            conn.execute('''
+            UPDATE interactions
+            SET chatgpt_response = ?
+            WHERE id = (SELECT MAX(id) FROM interactions)
+            ''', (str(response.json()),))
+            conn.commit()
+            conn.close()
 
             print(f"Response: {response.json()}")
             return response.json()

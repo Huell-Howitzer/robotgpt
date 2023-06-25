@@ -3,7 +3,7 @@ import os
 import sqlite3
 
 def init_db():
-    db_path = '/var/lib/sqlite.db'
+    db_path = 'sqlite.db'
     print(f"Database path: {db_path}")
     try:
         conn = sqlite3.connect(db_path)

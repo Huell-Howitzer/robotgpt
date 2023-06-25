@@ -8,9 +8,9 @@ from dotenv import load_dotenv
 from difflib import SequenceMatcher
 import black
 import requests
+from werkzeug.utils import secure_filename
 
 load_dotenv()
-
 
 class Engine:
     def __init__(self, api_key):
@@ -64,6 +64,16 @@ class Engine:
         except Exception as e:
             print(f"Error while writing the file: {str(e)}")
             return False
+
+    def process_speech_to_text(self, file_path):
+        """
+        Process speech to text
+        """
+        print(f"Processing speech to text...")
+        audio_file = open(file_path, "rb")
+        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+        print(transcript)
+        return transcript
 
     def handle_request(self, prompt, expected_output):
         """

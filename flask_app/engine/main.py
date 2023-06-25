@@ -3,6 +3,7 @@ import os
 import openai
 import nltk
 import re
+from database import Database
 import sqlite3
 from io import StringIO
 import sys
@@ -14,32 +15,12 @@ from werkzeug.utils import secure_filename
 
 load_dotenv()
 
-class Engine:
+class Engine(Database):
     def __init__(self, api_key):
+        super().__init__()
         self.api_key = api_key
         self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'prompt.txt'))
         openai.api_key = self.api_key
-        self.init_db()
-
-    def init_db(self):
-        """
-        Initialize the SQLite database
-        """
-        db_path = os.path.join(os.path.dirname(__file__), 'sqlite.db')
-        if not os.path.exists(db_path):
-            conn = sqlite3.connect(db_path)
-            conn.execute('''
-            CREATE TABLE interactions (
-                id INTEGER PRIMARY KEY,
-                user_input TEXT,
-                chatgpt_response TEXT,
-                expected_output TEXT,
-                actual_output TEXT,
-                similarity_score REAL,
-                iteration_number INTEGER
-            )
-            ''')
-            conn.close()
 
     def format_code(self, code):
         """
@@ -126,12 +107,7 @@ class Engine:
             ]
 
             # Insert the messages into the database before sending the request
-            conn = sqlite3.connect('sqlite.db')
-            conn.execute('''
-            INSERT INTO interactions (user_input, chatgpt_response, expected_output, actual_output, similarity_score, iteration_number)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ''', (str(messages), None, expected_output, None, None, 1))
-            conn.commit()
+            self.save_to_db(str(messages), None, expected_output, None, None, 1)
 
             response = requests.post(
                 "https://api.openai.com/v1/chat/completions",
@@ -145,26 +121,19 @@ class Engine:
             )
 
             # Update the database with the response after receiving it
-            conn.execute('''
-            UPDATE interactions
-            SET chatgpt_response = ?
-            WHERE id = (SELECT MAX(id) FROM interactions)
-            ''', (str(response.json()),))
-            conn.commit()
-            conn.close()
+            self.update_db(str(response.json()))
 
             print(f"Response: {response.json()}")
             return response.json()
         except Exception as e:
             print(f"Error while handling the request: {str(e)}")
             return None
-
     def extract_code_from_chat_model(self, prompt, expected_output):
         """
         Extract code from chat model response
         """
         print("Extracting code from chat model response...")
-        model = "gpt-3.5-turbo-16k-0613"
+        openai.model = "gpt-3.5-turbo-16k-0613"
         file_path = self.write_file(self.prompt_file, prompt)
 
         if file_path:
@@ -229,6 +198,10 @@ class Engine:
             if response:
                 code = self.extract_code_from_chat_model(prompt, expected_output)
                 print("Generated code:\n", code)
+
+                # Save the generated code to the database
+                save_to_db(prompt, expected_output, code)  # replace with your actual function
+
                 return code
             else:
                 return None

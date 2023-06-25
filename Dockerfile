@@ -8,6 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 COPY docs/build /app/templates/docs
 COPY flask_app/engine /app/engine
+COPY flask_app/engine/database.py /app/engine/
 COPY flask_app /app/flask_app
 COPY flask_app/robot_framework/data /app/data
 COPY flask_app/.env .

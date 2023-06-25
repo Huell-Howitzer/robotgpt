@@ -3,14 +3,12 @@ import subprocess
 
 from flask import jsonify
 
-from flask_app.engine.database import init_db
 import dotenv
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
 
-if __name__ == '__main__':
-    if __name__ == '__main__':
-        from flask_app.engine.main import Engine
+from flask_app.engine.main import Engine
+from flask_app.engine.database import Database
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')
@@ -21,6 +19,7 @@ prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'dat
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
 engine = Engine(api_key)
+database = Database()
 
 @app.route('/')
 def index():
@@ -139,7 +138,7 @@ def process_audio():
     return jsonify({'error': 'Invalid file'})
 
 if __name__ == '__main__':
-    init_db()
+    database.init_db()
     app.run(host='0.0.0.0', port=5000)
 
 

@@ -16,11 +16,9 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Copy the necessary files
 COPY requirements.txt .
 COPY docs/build /app/templates/docs
-COPY flask_app/engine /app
-COPY flask_app /app
+COPY engine .
+COPY database .
 COPY flask_app/robot_framework/data /app/data
-COPY flask_app/.env .
-COPY flask_app/config.py .
 
 # Set the Python path
 ENV PYTHONPATH "${PYTHONPATH}:/app"

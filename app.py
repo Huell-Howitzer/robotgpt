@@ -6,17 +6,17 @@ from flask import jsonify
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
 
-from main import engine
+from engine.main import Engine
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')
 
 # Get the absolute path to the prompt.txt file
 load_dotenv()
-prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '', 'data', 'input', 'prompt.txt'))
+prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '', 'flask_app/data', 'input', 'prompt.txt'))
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
-engine = engine.Engine(api_key)
+engine = Engine(api_key)
 database = engine.database
 
 
@@ -72,7 +72,7 @@ def get_formatted_code():
 
 @app.route('/robot_framework/reports/report')
 def serve_report():
-    reports_dir = os.path.join(app.root_path, 'robot_framework', 'reports')
+    reports_dir = os.path.join(app.root_path, 'flask_app/robot_framework', 'reports')
     filename = "report.html"
     file_path = os.path.join(reports_dir, filename)
 
@@ -83,7 +83,7 @@ def serve_report():
 
 @app.route('/robot_framework/reports/logs')
 def serve_logs():
-    logs_dir = os.path.join(app.root_path, 'robot_framework', 'reports')
+    logs_dir = os.path.join(app.root_path, 'flask_app/robot_framework', 'reports')
     filename = "logs.html"
     file_path = os.path.join(logs_dir, filename)
 

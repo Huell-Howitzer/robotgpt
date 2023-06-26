@@ -1,17 +1,13 @@
-version: '3'
+version: '3.8'
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - PYTHONPATH=/app
     volumes:
-      - .:/app
-      - db-data:/app/flask_app/engine
+      - ./flask_app:/app/flask_app
+      - ./flask_app/engine:/app/engine
+      - ./flask_app/database:/app/database
     ports:
       - 5000:5000
     command: ["python", "-m", "flask_app.app"]
-
-volumes:
-  db-data:

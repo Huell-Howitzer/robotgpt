@@ -6,7 +6,7 @@ from flask import jsonify
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
 
-from engine.main import Engine
+from main import engine
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')
@@ -16,7 +16,7 @@ load_dotenv()
 prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '', 'data', 'input', 'prompt.txt'))
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
-engine = Engine(api_key)
+engine = engine.Engine(api_key)
 database = engine.database
 
 

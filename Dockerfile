@@ -16,11 +16,14 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Copy the necessary files
 COPY requirements.txt .
 COPY docs/build /app/templates/docs
-COPY flask_app/engine /app/engine
-COPY flask_app /app/flask_app
+COPY flask_app/engine /app
+COPY flask_app /app
 COPY flask_app/robot_framework/data /app/data
 COPY flask_app/.env .
 COPY flask_app/config.py .
+
+# Set the Python path
+ENV PYTHONPATH "${PYTHONPATH}:/app"
 
 # Install dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
@@ -32,7 +35,7 @@ EXPOSE 5000
 VOLUME /app
 
 # Set the entry point and command to start the Flask app
-CMD ["python", "-m", "flask_app.app"]
+CMD ["python", "/app/app.py"]
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog

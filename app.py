@@ -6,7 +6,7 @@ from flask import jsonify
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory, send_file
 
-from engine.main import Engine
+from main import Engine
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')

@@ -11,7 +11,7 @@ import openai
 import requests
 from dotenv import load_dotenv
 
-from database.db import Database
+from db import Database
 
 load_dotenv()
 

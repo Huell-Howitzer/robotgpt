@@ -1,4 +1,5 @@
 import os
+import openai
 import subprocess
 
 from flask import jsonify
@@ -32,7 +33,7 @@ def run():
     generated_code = ""
     code_output = ""
     similarity = None
-    api_key = engine.api_key
+    openai.api_key = engine.api_key
 
     if request.method == 'POST':
         prompt = request.form.get('prompt')

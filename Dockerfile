@@ -15,11 +15,14 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Copy the necessary files
 COPY requirements.txt .
+COPY templates .
 COPY docs/build /app/templates/docs
 COPY app.py .
 COPY engine/main.py .
 COPY database/db.py .
 COPY flask_app/robot_framework/data /app/data
+
+RUN mv /app/*.html /app/templates/
 
 # Set the Python path
 ENV PYTHONPATH "${PYTHONPATH}:/app"
@@ -30,8 +33,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # Expose the necessary port
 EXPOSE 5000
 
-# Set up the volume for live code reloading
-VOLUME /app
 
 # Set the entry point and command to start the Flask app
 CMD ["python", "/app/app.py"]

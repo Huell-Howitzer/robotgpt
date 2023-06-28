@@ -41,3 +41,12 @@ class Database:
         conn.close()
         return result
 
+    def update_db(self, id, chatgpt_response, actual_output, similarity_score):
+        conn = sqlite3.connect(self.db_path)
+        conn.execute('''
+        UPDATE interactions
+        SET chatgpt_response = ?, actual_output = ?, similarity_score = ?
+        WHERE id = ?
+        ''', (chatgpt_response, actual_output, similarity_score, id))
+        conn.commit()
+        conn.close()

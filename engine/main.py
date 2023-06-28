@@ -1,4 +1,6 @@
 # engine.py
+import json
+import jsonify
 import os
 import re
 import sys
@@ -201,7 +203,7 @@ class Engine(Database):
                 print("Generated code:\n", code)
 
                 # Save the generated code to the database
-                save_to_db(prompt, expected_output, code)  # replace with your actual function
+                self.save_to_db(prompt, expected_output, code)  # replace with your actual function
 
                 return code
             else:
@@ -225,7 +227,6 @@ class Engine(Database):
 
             # Get the captured output
             output = captured_output.getvalue()
-
             print("[execute_code] Output of the code:")
             print(output)
             return output

@@ -22,8 +22,6 @@ app = Flask(__name__, template_folder='templates')
 
 load_dotenv()
 
-db = Database()
-db.init_db()
 
 # Get the absolute path to the prompt.txt file
 prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'prompt.txt'))
@@ -185,6 +183,7 @@ def process_audio():
     return jsonify({'error': 'Invalid file'})
 
 if __name__ == '__main__':
+    app.debug = True
     database.init_db()
     app.run(host='0.0.0.0', port=5000)
 

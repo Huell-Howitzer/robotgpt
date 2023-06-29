@@ -21,13 +21,13 @@ class Database:
                 similarity_score REAL,
                 iteration_number INTEGER,
                 created INTEGER,
-                prompt_tokens INTEGER,  # Add this line
-                completion_tokens INTEGER,  # Add this line
-                total_tokens INTEGER,  # Add this line
-                response_id TEXT,  # Add this line
-                chatgpt_finish_reason TEXT,  # Add this line
-                chatgpt_output TEXT,  # Add this line
-                api_response TEXT  # Add this line
+                prompt_tokens INTEGER,
+                completion_tokens INTEGER,
+                total_tokens INTEGER,
+                response_id TEXT,
+                chatgpt_finish_reason TEXT,
+                chatgpt_output TEXT,
+                api_response TEXT
             )
             ''')
             conn.close()

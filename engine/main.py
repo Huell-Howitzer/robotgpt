@@ -117,9 +117,9 @@ class Engine(Database):
                     "https://api.openai.com/v1/chat/completions",
                     headers=headers,
                     json={
-                        "model": "gpt-3.5-turbo-16k",
+                        "model": "gpt-3.5-turbo-16k-0613",
                         "messages": messages,
-                        "max_tokens": 9000,
+                        "max_tokens": 7044,
                         "temperature": 0.8,
                     },
                 )

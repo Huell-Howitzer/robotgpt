@@ -60,7 +60,7 @@ def run():
         try:
             completion_tokens = len(nltk.word_tokenize(generated_code)) - prompt_tokens
         except Exception as e:
-            return jsonify({"error": "Failed to generate code... Please try again."})
+            return render_template("run.html", error="Failed to generate code... Please try again.")
 
         # Calculate the total number of tokens
         total_tokens = prompt_tokens + completion_tokens
@@ -102,12 +102,12 @@ def run():
                     extracted_code=extracted_code,  # Add the extracted code parameter
                     api_response=response,  # pass the entire response dictionary as a single argument
                 )
-                return jsonify({"message": "Code generated and saved to database."})
+                return render_template("run.html", message="Code generated and saved to database.", generated_code=generated_code, actual_output=actual_output, similarity=similarity)
             else:
-                return jsonify({"message": "Code generated but did not meet similarity threshold."})
+                return render_template("run.html", message="Code generated but did not meet similarity threshold.", generated_code=generated_code, actual_output=actual_output, similarity=similarity)
 
         else:
-            return jsonify({"error": "Failed to generate code. Please try again."})
+            return render_template("run.html", error="Failed to generate code. Please try again.")
 
     elif request.method == "GET":
         # Handle GET request
@@ -122,6 +122,7 @@ def run():
         )
     else:
         return jsonify({"error": "Invalid request method."})
+
 
 
 

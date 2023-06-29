@@ -1,9 +1,13 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html>
 <head>
   <title>{% block title %} {% endblock %}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+  <!-- Add your Font Awesome kit -->
+  <script src="https://kit.fontawesome.com/ed2d1d262f.js" crossorigin="anonymous"></script>
+
   <style>
     .sidenav {
       height: 100%;
@@ -33,9 +37,22 @@
       margin-left: 240px;
       padding: 0px 10px;
     }
+
+    /* Add a style for the bug icon */
+    .debug-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1000;  /* Make sure the icon is above other elements */
+    }
   </style>
 </head>
 <body>
+  <!-- Add the bug icon -->
+  {% if debug %}
+    <i class="fas fa-bug debug-icon"></i>
+  {% endif %}
+
   <div id="app">
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
       <!-- Navbar content goes here -->
@@ -80,7 +97,7 @@
             </ul>
           </aside>
         </div>
-        <div class="column is-10">
+        <div class="column is-10
           <div class="container">
             {% block content %}
             {% endblock %}

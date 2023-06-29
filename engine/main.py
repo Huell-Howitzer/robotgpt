@@ -1,35 +1,30 @@
-# engine.py
 import json
 import types
-
-import jsonify
 import os
 import re
 import sys
 from difflib import SequenceMatcher
 from io import StringIO
-
+import traceback
 import black
 import nltk
 import openai
 import requests
 from dotenv import load_dotenv
 
-from db import Database
+from database.db import Database
 
 load_dotenv()
-
 
 class Engine(Database):
     def __init__(self):
         load_dotenv()
         super().__init__()
-        self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'prompt.txt'))
+        self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "prompt.txt"))
         self.database = Database()
-        self.api_key = os.getenv('OPENAI_API_KEY')
+        self.api_key = os.getenv("OPENAI_API_KEY")
         openai.api_key = self.api_key
-        print(f"API Key: {self.api_key}")  # Add this line
-
+        print(f"API Key: {self.api_key}")
 
     def format_code(self, code):
         """
@@ -56,8 +51,8 @@ class Engine(Database):
         """
         print(f"Reading the file: {file_path}...")
         try:
-            with open(file_path, 'r') as file:
-                data = file.read().replace('\n', '')
+            with open(file_path, "r") as file:
+                data = file.read().replace("\n", "")
             print(f"File content: {data}")
             return data
         except Exception as e:
@@ -70,7 +65,7 @@ class Engine(Database):
         """
         print(f"Writing the file: {file_path}...")
         try:
-            with open(file_path, 'w') as file:
+            with open(file_path, "w") as file:
                 file.write(data)
             print(f"File content: {data}")
             return True
@@ -88,130 +83,106 @@ class Engine(Database):
         print(transcript)
         return transcript
 
-    def handle_request(self, prompt, expected_output):
-        """
-        Handle request
-        """
+    def handle_request(self, prompt, expected_output, similarity_threshold, max_attempts=10):
         print("Handling the request...")
 
         # Download the required NLTK resource
-        nltk.download('punkt')
+        nltk.download("punkt")
 
         # Calculate the token count of the input prompt using NLTK
         prompt_tokens = len(nltk.word_tokenize(prompt))
 
         # Calculate the remaining tokens by subtracting the prompt tokens from the maximum allowed tokens
-        remaining_tokens = 16384 - prompt_tokens
+        remaining_tokens = 16384 - 8000
 
-        try:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type" : "application/json"
-            }
-
-            messages = [
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt},
-                {"role": "user", "content": f"Here is the expected output of the program: {expected_output}"}
-            ]
-
-            response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers=headers,
-                json={
-                    "model"      : "gpt-3.5-turbo-16k-0613",
-                    "messages"   : messages,
-                    "max_tokens" : 8242,
-                    "temperature": 1.0
+        similarity_score = 0
+        attempts = 0
+        while similarity_score < int(similarity_threshold) and attempts < max_attempts:
+            try:
+                headers = {
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
                 }
-            )
 
-            # Print the response for debugging
-            print("Response from OpenAI API:")
-            print(response.json())
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt},
+                    {
+                        "role": "user",
+                        "content": f"Here is the expected output of the program: {expected_output}",
+                    },
+                ]
 
-            # Check if 'choices' is in the response
-            if 'choices' in response.json():
-                # Extract the required fields from the response
-                response_data = response.json()
-                response_id = response_data['id']
-                object_type = response_data['object']
-                created_at = response_data['created']
-                model_used = response_data['model']
-                chatgpt_response = response_data['choices'][0]['message']['content']
-                chatgpt_finish_reason = response_data['choices'][0]['finish_reason']
-                usage_info = response_data['usage']
-                prompt_tokens = usage_info['prompt_tokens']
-                completion_tokens = usage_info['completion_tokens']
-                total_tokens = usage_info['total_tokens']
-
-                # Insert the messages into the database before sending the request
-                self.save_to_db(
-                    user_input=str(messages),
-                    expected_output=response_id,
-                    actual_output=object_type,
-                    similarity_score=created_at,
-                    prompt_tokens=model_used,
-                    completion_tokens=chatgpt_response,
-                    total_tokens=chatgpt_finish_reason,
-                    response_id=expected_output,
-                    chatgpt_finish_reason=None,
-                    chatgpt_output=None,
-                    api_response=response_data
+                response = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    headers=headers,
+                    json={
+                        "model": "gpt-3.5-turbo-16k",
+                        "messages": messages,
+                        "max_tokens": 9000,
+                        "temperature": 0.8,
+                    },
                 )
 
-                # Extract the code from the response and perform further processing
-                code = self.extract_code_from_chat_model(chatgpt_response, expected_output)
-                formatted_code = self.format_code(code)
+                # Parse the response as JSON
+                response_data = response.json()
 
-                # Execute the code and get the actual output
-                print("[handle_request] Executing the code...")
-                actual_output = self.execute_code(formatted_code)
+                # Check if 'choices' is in the response
+                if "choices" in response_data:
+                    # Extract the required fields from the response
+                    response_id = response_data["id"]
+                    object_type = response_data["object"]
+                    created_at = response_data["created"]
+                    model_used = response_data["model"]
+                    chatgpt_response = response_data["choices"][0]["message"]["content"]
+                    chatgpt_finish_reason = response_data["choices"][0]["finish_reason"]
+                    usage_info = response_data["usage"]
+                    prompt_tokens = usage_info["prompt_tokens"]
+                    completion_tokens = usage_info["completion_tokens"]
+                    total_tokens = usage_info["total_tokens"]
 
-                # Calculate the similarity score
-                similarity_score = self.calculate_similarity(expected_output, actual_output)
+                    print(f"Response: {chatgpt_response}")
+                    return chatgpt_response
+                else:
+                    if "error" in response_data:
+                        error_message = response_data["error"]["message"]
+                    else:
+                        error_message = "Unknown error occurred"
+                    print(f"Error: {error_message}")
+                    return None
 
-                # Update the database
-                print("[handle_request] Updating the database...")
-                self.update_db(chatgpt_response, actual_output, similarity_score)
-
-                print(f"Response: {chatgpt_response}")
-                return chatgpt_response
-            else:
-                print(f"Error: 'choices' not in response")
+            except Exception as e:
+                print(f"Error occurred during request handling: {str(e)}")
                 return None
-        except Exception as e:
-            print(f"Error while handling the request: {str(e)}")
-            return None
 
-    def extract_code_from_chat_model(self, prompt, expected_output):
-        """
-        Extract code from chat model response
-        """
+    import json
+    import re
+    import black
+
+    def extract_code_from_chat_model(self, response_json):
         print("Extracting code from chat model response...")
-        openai.model = "gpt-3.5-turbo-16k-0613"
-        file_path = self.write_file(self.prompt_file, prompt)
+        print(response_json)
+        response_data = json.dumps(response_json)
+        print(response_data)
+        # Extract Python code using regular expression
+        code_matches = re.findall(r"```(?s)(.*?)```(?s)", response_data, re.DOTALL)
+        print(f"code_matches: {code_matches}")
+        code = code_matches
+        if code[0][:6] == 'python':
+            code = code[0][6:]
+            code = code.replace('\\n', '\n')
+            code = code.replace('\\', '')
+            blackened_code = black.format_str(code, mode=black.FileMode())
+            print(f"code: {blackened_code}")
+            return blackened_code
 
-        if file_path:
-            response = self.handle_request(prompt, expected_output)
-            content = response['choices'][0]['message']['content']
-
-            # Extract Python code using regular expression
-            code_match = re.search(r'```python([\s\S]*?)```', content)
-            if code_match:
-                code = code_match.group(1).strip()  # Get the code
-                print(f"Extracted code:\n{code}")
-                return code
-            else:
-                print(f"Code could not be extracted from the response: {content}")
-                return None
-        else:
-            return None
-
-    def execute_engine_logic(self, prompt_file, expected_output):
+    def execute_engine_logic(self, prompt, expected_output, similarity_threshold):
         print("Executing the engine logic...")
         try:
-            code = self.extract_code_from_chat_model(prompt_file, expected_output)
+            code = self.generate_code(prompt, expected_output, similarity_threshold)
+            if code is None:
+                return "Failed to generate code"
+
             formatted_code = self.format_code(code)
 
             print("Executing the code...")
@@ -227,7 +198,7 @@ class Engine(Database):
             locals_dict = {}
 
             # Execute the code in the given dictionary
-            exec(formatted_code, {'__builtins__': {}}, locals_dict)
+            exec(formatted_code, {"__builtins__": {}}, locals_dict)
 
             # Retrieve the captured output
             output = captured_output.getvalue()
@@ -244,21 +215,22 @@ class Engine(Database):
             error_message = str(e)
             return f"An error occurred during execution: {error_message}"
 
-    def generate_code(self, prompt, expected_output):
+    def generate_code(self, prompt, expected_output, similarity_threshold):
         """
         Generate Python code using ChatGPT
         """
         print("Generating code...")
+        print(f"similarity_threshold: {similarity_threshold}")
         try:
-            response = self.handle_request(prompt, expected_output)
+            x = self.handle_request(
+                prompt, expected_output, float(similarity_threshold)
+            )
 
-            if response:
-                code = self.extract_code_from_chat_model(prompt, expected_output)
+            if x:
+                code = self.extract_code_from_chat_model(x)
                 print("Generated code:\n", code)
 
                 # Save the generated code to the database
-                self.save_to_db(prompt, expected_output, code)  # replace with your actual function
-
                 return code
             else:
                 return None
@@ -295,3 +267,4 @@ class Engine(Database):
             print(f"[execute_code] Error while executing code:")
             print(f"Line {error_line}: {error_message}")
             return f"An error occurred during execution: Line {error_line}, {error_message}"
+

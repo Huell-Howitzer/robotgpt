@@ -19,15 +19,15 @@ class Database:
                 expected_output TEXT,
                 actual_output TEXT,
                 similarity_score REAL,
-                iteration_number INTEGER,
-                created INTEGER,
                 prompt_tokens INTEGER,
                 completion_tokens INTEGER,
                 total_tokens INTEGER,
                 response_id TEXT,
                 chatgpt_finish_reason TEXT,
                 chatgpt_output TEXT,
-                api_response TEXT
+                extracted_code TEXT,
+                api_response TEXT,
+                created INTEGER
             )
             ''')
             conn.close()
@@ -35,22 +35,13 @@ class Database:
         except Exception as e:
             print(f"Error when creating database: {e}")
 
+    def save_to_db(self, user_input, expected_output, actual_output, similarity_score, prompt_tokens, completion_tokens,
+                   total_tokens, response_id, chatgpt_finish_reason, chatgpt_output, extracted_code, api_response,
+                   created):
+        # Your implementation of saving the data to the database
 
-    def save_to_db(
-        self,
-        user_input,
-        expected_output,
-        actual_output,
-        similarity_score,
-        prompt_tokens,
-        completion_tokens,
-        total_tokens,
-        response_id,
-        chatgpt_finish_reason,
-        chatgpt_output,
-        api_response
-    ):
         conn = sqlite3.connect(self.db_path)
+        serialized_api_response = json.dumps(api_response)
         conn.execute(
             '''
             INSERT INTO interactions (
@@ -64,10 +55,11 @@ class Database:
                 response_id,
                 chatgpt_finish_reason,
                 chatgpt_output,
+                extracted_code,
                 api_response,
                 created
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
             (
                 user_input,
@@ -80,8 +72,9 @@ class Database:
                 response_id,
                 chatgpt_finish_reason,
                 chatgpt_output,
-                json.dumps(api_response),
-                api_response['created']
+                extracted_code,
+                serialized_api_response,
+                created
             )
         )
         conn.commit()
@@ -103,3 +96,5 @@ class Database:
         ''', (chatgpt_response, actual_output, similarity_score, id))
         conn.commit()
         conn.close()
+
+

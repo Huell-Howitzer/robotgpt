@@ -1,54 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Program Runner</h1>
+  <h1 class="title">Program Runner</h1>
   <form method="post" action="/run">
     <div class="field">
-      <label class="label">Prompt</label>
+      <label class="label"><i class="fas fa-keyboard"></i> Prompt</label>
       <div class="control">
         <textarea class="textarea" name="prompt" placeholder="Enter the prompt">{{ prompt }}</textarea>
       </div>
     </div>
     <div class="field">
-      <label class="label">Expected Output</label>
+      <label class="label"><i class="fas fa-file-code"></i> Expected Output</label>
       <div class="control">
         <textarea class="textarea" name="expected_output" placeholder="Enter the expected output">{{ expected_output }}</textarea>
       </div>
     </div>
     <div class="field">
-        <label class="label">Generated Code</label>
-        <div class="control">
-            <pre><code>{{ generated_code }}</code></pre>
-        </div>
+      <label class="label"><i class="fas fa-code"></i> Generated Code</label>
+      <div class="control">
+        <pre><code>{{ generated_code }}</code></pre>
       </div>
-    <div class="field">
-        <label class="label">Actual Output</label>
-        <div class="control">
-            <textarea class="textarea" name="actual_output" readonly>{{ code_output }}</textarea>
     </div>
-</div>
+    <div class="field">
+      <label class="label"><i class="fas fa-terminal"></i> Actual Output</label>
+      <div class="control">
+        <textarea class="textarea" name="actual_output" readonly>{{ code_output }}</textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label"><i class="fas fa-percentage"></i> Required Similarity (%)</label>
+      <div class="control">
+        <input class="input" type="number" name="similarity_threshold" min="0" max="100" step="1" value="{{ similarity_threshold }}">
+      </div>
+    </div>
 
     <div class="field">
       <div class="control">
-        <button class="button is-primary" type="submit">Run</button>
+        <button class="button is-primary" type="submit"><i class="fas fa-play"></i> Run</button>
       </div>
     </div>
   </form>
   {% if similarity %}
     <div class="field">
-      <label class="label">Similarity</label>
+      <label class="label"><i class="fas fa-chart-bar"></i> Similarity</label>
       <div class="control">
         <input class="input" type="text" value="{{ similarity }}%" readonly>
       </div>
     </div>
   {% endif %}
   <div class="field">
-    <label class="label">API Key</label>
+    <label class="label"><i class="fas fa-key"></i> API Key</label>
     <div class="control">
       <input class="input" type="text" value="{{ api_key }}" readonly>
     </div>
   </div>
 {% endblock %}
+
 
 
 

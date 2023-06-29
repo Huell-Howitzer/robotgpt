@@ -1,4 +1,6 @@
 import os
+
+import nltk
 import openai
 import subprocess
 
@@ -14,10 +16,10 @@ app = Flask(__name__, template_folder='templates')
 
 # Get the absolute path to the prompt.txt file
 load_dotenv()
-prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '', 'flask_app/data', 'input', 'prompt.txt'))
+prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'prompt.txt'))
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
-engine = Engine(api_key)
+engine = Engine()
 database = engine.database
 
 
@@ -25,33 +27,62 @@ database = engine.database
 def index():
     return render_template('index.html')
 
+
 @app.route('/run', methods=['GET', 'POST'])
 def run():
-    # Set default values
-    prompt = ""
-    expected_output = ""
-    generated_code = ""
-    code_output = ""
-    similarity = None
-    openai.api_key = engine.api_key
-
     if request.method == 'POST':
+        # Handle POST request
+        # Get the prompt and expected output from the form
         prompt = request.form.get('prompt')
         expected_output = request.form.get('expected_output')
 
-        # Generate code using ChatGPT
+        # Save the prompt and expected output to the database
+        prompt_tokens = len(nltk.word_tokenize(prompt))
+
+        # Generate the code using the prompt and expected output
         generated_code = engine.generate_code(prompt, expected_output)
 
-        # Check if generated_code is not None
-        if generated_code is not None:
-            # Execute the generated code and capture its output
-            code_output = engine.execute_code(generated_code)
+        # Calculate the number of completion tokens
+        completion_tokens = len(nltk.word_tokenize(generated_code)) - prompt_tokens
 
-            # Check if code_output is not None
-            if code_output is not None:
-                similarity = engine.calculate_similarity(expected_output, code_output)
+        # Calculate the total number of tokens
+        total_tokens = prompt_tokens + completion_tokens
 
-    return render_template('run.html', prompt=prompt, expected_output=expected_output, similarity=similarity, generated_code=generated_code, code_output=code_output, api_key=api_key)
+        # Save the data to the database
+        engine.save_to_db(
+            prompt,
+            expected_output,
+            None,
+            None,
+            prompt_tokens,
+            completion_tokens,
+            total_tokens,
+            None,
+            None,
+            None,
+            None
+        )
+
+        # Retrieve the last interaction from the database
+        last_interaction = engine.get_last_interaction()
+
+        # Execute the generated code and get the actual output
+        code_output = engine.execute_code(generated_code)
+
+        # Calculate the similarity score between the expected and actual output
+        similarity_score = engine.calculate_similarity(expected_output, code_output)
+
+        # Update the database with the ChatGPT response, actual output, and similarity score
+        engine.update_db(last_interaction[0], generated_code, code_output, similarity_score)
+
+        # Render the run.html template with the updated data
+        return render_template('run.html', prompt=prompt, expected_output=expected_output, generated_code=generated_code, code_output=code_output, similarity_score=similarity_score, api_key=engine.api_key)
+
+    elif request.method == 'GET':
+        # Handle GET request
+        return render_template('run.html', api_key=engine.api_key)
+
+
 
 def get_formatted_code():
     try:

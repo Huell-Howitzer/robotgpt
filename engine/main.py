@@ -1,5 +1,7 @@
 # engine.py
 import json
+import types
+
 import jsonify
 import os
 import re
@@ -17,13 +19,17 @@ from db import Database
 
 load_dotenv()
 
+
 class Engine(Database):
-    def __init__(self, api_key):
+    def __init__(self):
+        load_dotenv()
         super().__init__()
-        self.api_key = api_key
-        self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '../flask_app', 'data', 'input', 'prompt.txt'))
+        self.prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'prompt.txt'))
         self.database = Database()
+        self.api_key = os.getenv('OPENAI_API_KEY')
         openai.api_key = self.api_key
+        print(f"API Key: {self.api_key}")  # Add this line
+
 
     def format_code(self, code):
         """
@@ -109,9 +115,6 @@ class Engine(Database):
                 {"role": "user", "content": f"Here is the expected output of the program: {expected_output}"}
             ]
 
-            # Insert the messages into the database before sending the request
-            self.save_to_db(str(messages), None, expected_output, None, None, 1)
-
             response = requests.post(
                 "https://api.openai.com/v1/chat/completions",
                 headers=headers,
@@ -123,14 +126,54 @@ class Engine(Database):
                 }
             )
 
-            # Update the database with the response after receiving it
-            self.update_db(str(response.json()))
+            # Print the response for debugging
+            print("Response from OpenAI API:")
+            print(response.json())
 
-            print(f"Response: {response.json()}")
-            return response.json()
+            # Check if 'choices' is in the response
+            if 'choices' in response.json():
+                # Extract the required fields from the response
+                response_data = response.json()
+                response_id = response_data['id']
+                object_type = response_data['object']
+                created_at = response_data['created']
+                model_used = response_data['model']
+                chatgpt_response = response_data['choices'][0]['message']['content']
+                chatgpt_finish_reason = response_data['choices'][0]['finish_reason']
+                usage_info = response_data['usage']
+                prompt_tokens = usage_info['prompt_tokens']
+                completion_tokens = usage_info['completion_tokens']
+                total_tokens = usage_info['total_tokens']
+
+                # Insert the messages into the database before sending the request
+                self.save_to_db(str(messages), response_id, object_type, created_at, model_used, chatgpt_response,
+                                chatgpt_finish_reason, expected_output, None, None, None, None, prompt_tokens,
+                                completion_tokens, total_tokens)
+
+                # Extract the code from the response and perform further processing
+                code = self.extract_code_from_chat_model(chatgpt_response, expected_output)
+                formatted_code = self.format_code(code)
+
+                # Execute the code and get the actual output
+                print("[handle_request] Executing the code...")
+                actual_output = self.execute_code(formatted_code)
+
+                # Calculate the similarity score
+                similarity_score = self.calculate_similarity(expected_output, actual_output)
+
+                # Update the database
+                print("[handle_request] Updating the database...")
+                self.update_db(chatgpt_response, actual_output, similarity_score)
+
+                print(f"Response: {chatgpt_response}")
+                return chatgpt_response
+            else:
+                print(f"Error: 'choices' not in response")
+                return None
         except Exception as e:
             print(f"Error while handling the request: {str(e)}")
             return None
+
     def extract_code_from_chat_model(self, prompt, expected_output):
         """
         Extract code from chat model response
@@ -156,6 +199,7 @@ class Engine(Database):
             return None
 
     def execute_engine_logic(self, prompt_file, expected_output):
+        print("Executing the engine logic...")
         try:
             code = self.extract_code_from_chat_model(prompt_file, expected_output)
             formatted_code = self.format_code(code)
@@ -222,8 +266,11 @@ class Engine(Database):
             captured_output = StringIO()
             sys.stdout = captured_output
 
-            # Execute the code
-            exec(code)
+            # Check if the code is a string or a compiled code object
+            if isinstance(code, str):
+                exec(code)
+            elif isinstance(code, types.CodeType):
+                exec(code, globals())
 
             # Get the captured output
             output = captured_output.getvalue()

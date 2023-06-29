@@ -21,6 +21,9 @@ COPY app.py .
 COPY engine/main.py .
 COPY database/db.py .
 COPY flask_app/robot_framework/data /app/data
+COPY flask_app/data/input/prompt.txt .
+COPY .env .
+
 
 RUN mv /app/*.html /app/templates/
 
@@ -29,6 +32,10 @@ ENV PYTHONPATH "${PYTHONPATH}:/app"
 
 # Install dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
+
+
+# Install NLTK resource
+RUN python -m nltk.downloader punkt
 
 # Expose the necessary port
 EXPOSE 5000

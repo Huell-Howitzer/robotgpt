@@ -45,7 +45,7 @@
     <div class="field">
       <label class="label"><i class="fas fa-chart-bar"></i> Similarity</label>
       <div class="control">
-        <input class="input" type="text" value="{{ similarity }}%" readonly>
+          <input class="input" type="text" value="{{ similarity }}%" readonly id="similarity-score">
       </div>
     </div>
   {% endif %}
@@ -55,11 +55,21 @@
       <input class="input" type="text" value="{{ api_key }}" readonly>
     </div>
   </div>
+<script>
+window.onload = function() {
+  var similarityScore = document.getElementById('similarity-score').value;
+  var runButton = document.getElementById('run-button');
+
+  // Remove the '%' from the similarity score and convert it to a number
+  similarityScore = Number(similarityScore.replace('%', ''));
+
+  // Check if the similarity score is less than the threshold
+  if (similarityScore < {{ similarity_threshold }}) {
+    // Change the button color to yellow and the text to 'Run Again'
+    runButton.classList.remove('is-primary');
+    runButton.classList.add('is-warning');
+    runButton.innerHTML = '<i class="fas fa-redo"></i> Run Again';
+  }
+}
+</script>
 {% endblock %}
-
-
-
-
-
-
-

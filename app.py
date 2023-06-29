@@ -102,6 +102,10 @@ def run():
                     extracted_code=extracted_code,  # Add the extracted code parameter
                     api_response=response,  # pass the entire response dictionary as a single argument
                 )
+                return jsonify({"message": "Code generated and saved to database."})
+            else:
+                return jsonify({"message": "Code generated but did not meet similarity threshold."})
+
         else:
             return jsonify({"error": "Failed to generate code. Please try again."})
 
@@ -117,7 +121,8 @@ def run():
             similarity=None,
         )
     else:
-        return jsonify({"error": "Failed to generate code. Please try again."})
+        return jsonify({"error": "Invalid request method."})
+
 
 
 def get_formatted_code():
@@ -213,6 +218,13 @@ def process_audio():
             return jsonify({"error": str(e)})
 
     return jsonify({"error": "Invalid file"})
+
+@app.route("/results")
+def results():
+    generated_code = request.args.get('generated_code', '')
+    actual_output = request.args.get('actual_output', '')
+    similarity = request.args.get('similarity', '')
+    return render_template("results.html", generated_code=generated_code, actual_output=actual_output, similarity=similarity)
 
 
 if __name__ == "__main__":

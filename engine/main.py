@@ -142,7 +142,7 @@ class Engine(Database):
                     total_tokens = usage_info["total_tokens"]
 
                     print(f"Response: {chatgpt_response}")
-                    return chatgpt_response
+                    return response_data
                 else:
                     if "error" in response_data:
                         error_message = response_data["error"]["message"]
@@ -154,10 +154,6 @@ class Engine(Database):
             except Exception as e:
                 print(f"Error occurred during request handling: {str(e)}")
                 return None
-
-    import json
-    import re
-    import black
 
     def extract_code_from_chat_model(self, response_json):
         print("Extracting code from chat model response...")

@@ -146,9 +146,19 @@ class Engine(Database):
                 total_tokens = usage_info['total_tokens']
 
                 # Insert the messages into the database before sending the request
-                self.save_to_db(str(messages), response_id, object_type, created_at, model_used, chatgpt_response,
-                                chatgpt_finish_reason, expected_output, None, None, None, None, prompt_tokens,
-                                completion_tokens, total_tokens)
+                self.save_to_db(
+                    user_input=str(messages),
+                    expected_output=response_id,
+                    actual_output=object_type,
+                    similarity_score=created_at,
+                    prompt_tokens=model_used,
+                    completion_tokens=chatgpt_response,
+                    total_tokens=chatgpt_finish_reason,
+                    response_id=expected_output,
+                    chatgpt_finish_reason=None,
+                    chatgpt_output=None,
+                    api_response=response_data
+                )
 
                 # Extract the code from the response and perform further processing
                 code = self.extract_code_from_chat_model(chatgpt_response, expected_output)

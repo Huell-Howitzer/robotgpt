@@ -15,12 +15,17 @@ from flask import request
 from flask import send_file
 from flask import send_from_directory
 from main import Engine
+from db import Database
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='templates')
 
-# Get the absolute path to the prompt.txt file
 load_dotenv()
+
+db = Database()
+db.init_db()
+
+# Get the absolute path to the prompt.txt file
 prompt_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'prompt.txt'))
 api_key = os.getenv("OPENAI_API_KEY")
 print(f"API Key: {api_key}")
@@ -71,18 +76,20 @@ def run():
 
             # Save the data to the database
             engine.save_to_db(
-                prompt,
-                expected_output,
-                None,
-                None,
-                prompt_tokens,
-                completion_tokens,
-                total_tokens,
-                response_id,
-                chatgpt_finish_reason,
-                chatgpt_output,
-                response
+                user_input=prompt,
+                expected_output=expected_output,
+                actual_output=None,  # or the actual output if you have it
+                similarity_score=None,  # or the similarity score if you have it
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                total_tokens=total_tokens,
+                response_id=response_id,
+                chatgpt_finish_reason=chatgpt_finish_reason,
+                chatgpt_output=chatgpt_output,
+                api_response=response  # pass the entire response dictionary as a single argument
             )
+
+
 
             # Render the run.html template with the updated data
             return render_template('run.html', prompt=prompt, expected_output=expected_output, generated_code=generated_code, api_key=engine.api_key)

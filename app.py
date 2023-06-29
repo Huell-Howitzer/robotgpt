@@ -116,6 +116,8 @@ def run():
             code_output="",
             similarity=None,
         )
+    else:
+        return jsonify({"error": "Failed to generate code. Please try again."})
 
 
 def get_formatted_code():

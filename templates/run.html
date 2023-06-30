@@ -21,24 +21,26 @@
         <pre><code>{{ generated_code }}</code></pre>
       </div>
     </div>
-<div class="field">
-  <label class="label"><i class="fas fa-terminal"></i> Actual Output</label>
-  <div class="control">
-    <textarea class="textarea" name="actual_output" readonly>{{ actual_output }}</textarea>
-  </div>
-</div>
-
-
+    <div class="field">
+      <label class="label"><i class="fas fa-terminal"></i> Actual Output</label>
+      <div class="control">
+        <textarea class="textarea" name="actual_output" readonly>{{ actual_output }}</textarea>
+      </div>
+    </div>
     <div class="field">
       <label class="label"><i class="fas fa-percentage"></i> Required Similarity (%)</label>
       <div class="control">
         <input class="input" type="number" name="similarity_threshold" min="0" max="100" step="1" value="{{ similarity_threshold }}">
       </div>
     </div>
-
     <div class="field">
       <div class="control">
         <button class="button is-primary" type="submit" id="run-button"><i class="fas fa-play"></i> Run</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <button class="button is-dark" type="submit" id="hyperloop-button"><i class="fa-sharp fa-light fa-starship-freighter"></i> Hyper Speed</button>
       </div>
     </div>
   </form>
@@ -46,7 +48,7 @@
     <div class="field">
       <label class="label"><i class="fas fa-chart-bar"></i> Similarity</label>
       <div class="control">
-          <input class="input" type="text" value="{{ similarity }}%" readonly id="similarity-score">
+        <input class="input" type="text" value="{{ similarity }}%" readonly id="similarity-score">
       </div>
     </div>
   {% endif %}
@@ -74,4 +76,5 @@ window.onload = function() {
 }
 </script>
 {% endblock %}
+
 

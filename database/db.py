@@ -27,7 +27,9 @@ class Database:
                 chatgpt_output TEXT,
                 extracted_code TEXT,
                 api_response TEXT,
-                created INTEGER
+                created INTEGER,
+                api_created INTEGER,
+                api_model TEXT
             )
             ''')
             conn.close()
@@ -38,10 +40,12 @@ class Database:
     def save_to_db(self, user_input, expected_output, actual_output, similarity_score, prompt_tokens, completion_tokens,
                    total_tokens, response_id, chatgpt_finish_reason, chatgpt_output, extracted_code, api_response,
                    created):
-        # Your implementation of saving the data to the database
-
         conn = sqlite3.connect(self.db_path)
         serialized_api_response = json.dumps(api_response)
+
+        api_created = api_response['created']
+        api_model = api_response['model']
+
         conn.execute(
             '''
             INSERT INTO interactions (
@@ -57,9 +61,11 @@ class Database:
                 chatgpt_output,
                 extracted_code,
                 api_response,
-                created
+                created,
+                api_created,
+                api_model
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''',
             (
                 user_input,
@@ -74,27 +80,13 @@ class Database:
                 chatgpt_output,
                 extracted_code,
                 serialized_api_response,
-                created
+                created,
+                api_created,
+                api_model
             )
         )
         conn.commit()
         conn.close()
 
-    def get_last_interaction(self):
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.execute('SELECT * FROM interactions ORDER BY id DESC LIMIT 1')
-        result = cursor.fetchone()
-        conn.close()
-        return result
-
-    def update_db(self, id, chatgpt_response, actual_output, similarity_score):
-        conn = sqlite3.connect(self.db_path)
-        conn.execute('''
-        UPDATE interactions
-        SET chatgpt_response = ?, actual_output = ?, similarity_score = ?
-        WHERE id = ?
-        ''', (chatgpt_response, actual_output, similarity_score, id))
-        conn.commit()
-        conn.close()
 
 

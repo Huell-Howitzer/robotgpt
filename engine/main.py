@@ -241,6 +241,7 @@ class Engine(Database):
         print("[execute_code] Executing the code...")
         try:
             # Redirect stdout to a StringIO object
+            original_stdout = sys.stdout
             captured_output = StringIO()
             sys.stdout = captured_output
 
@@ -254,7 +255,6 @@ class Engine(Database):
             output = captured_output.getvalue()
             print("[execute_code] Output of the code:")
             print(output)
-            return output
         except Exception as e:
             # Handle any errors that occur during execution
             error_message = str(e)
@@ -262,5 +262,10 @@ class Engine(Database):
             error_line = error_info[2].tb_lineno
             print(f"[execute_code] Error while executing code:")
             print(f"Line {error_line}: {error_message}")
-            return f"An error occurred during execution: Line {error_line}, {error_message}"
+            output = f"An error occurred during execution: Line {error_line}, {error_message}"
+        finally:
+            # Reset stdout to its original state
+            sys.stdout = original_stdout
+        return output
+
 

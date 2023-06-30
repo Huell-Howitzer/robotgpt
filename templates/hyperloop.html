@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="title">Hyperloop Runner</h1>
+  <form method="post" action="/hyperloop">
+    <div class="field">
+      <label class="label">Prompt</label>
+      <div class="control">
+        <textarea class="textarea" name="prompt" placeholder="Enter the prompt">{{ prompt }}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Expected Output</label>
+      <div class="control">
+        <textarea class="textarea" name="expected_output" placeholder="Enter the expected output">{{ expected_output }}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Generated Code</label>
+      <div class="control">
+        <pre><code>{{ generated_code }}</code></pre>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Actual Output</label>
+      <div class="control">
+        <textarea class="textarea" name="actual_output" readonly>{{ actual_output }}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Required Similarity (%)</label>
+      <div class="control">
+        <input class="input" type="number" name="similarity_threshold" min="0" max="100" step="1" value="{{ similarity_threshold }}">
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <button class="button is-primary" type="submit" id="hyperloop-button"><i class="fas fa-sync"></i> Start Hyperloop</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Iteration</label>
+      <div class="control">
+        <input class="input" type="number" value="{{ iteration }}" readonly>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Current Similarity (%)</label>
+      <div class="control">
+        <input class="input" type="number" value="{{ similarity }}" readonly>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">API Key</label>
+      <div class="control">
+        <input class="input" type="text" value="{{ api_key }}" readonly>
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+<script>
+    // Call this when the "Start Hyperloop" button is clicked
+    function startHyperloop() {
+        $.ajax({
+            type: 'POST',
+            url: '/start_hyperloop',
+            data: $('form').serialize(),  // assuming your prompt, expected output, etc. are in a form
+            success: function(data, status, request) {
+                statusUrl = request.getResponseHeader('Location');
+                updateProgress(statusUrl);
+            },
+            error: function() {
+                alert('Unexpected error');
+            }
+        });
+    }
+
+    function updateProgress(statusUrl) {
+        $.getJSON(statusUrl, function(data) {
+            // Update your progress fields with data.iteration and data.similarity
+            // If the task is still running, call updateProgress again after a delay
+            if (data.state == 'PROGRESS') {
+                setTimeout(function() {
+                    updateProgress(statusUrl);
+                }, 2000);
+            }
+        });
+    }
+</script>
+

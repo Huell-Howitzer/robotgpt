@@ -1,0 +1,49 @@
+// dark.scss
+@import '../node_modules/bulma/sass/utilities/_all.sass';
+@import '../node_modules/bulma/sass/base/_all.sass';
+@import '../node_modules/bulma/sass/elements/button.sass';
+@import 'variables.scss';
+
+// Dark Theme Colors
+$primary: #2b3945;
+$secondary: #7f8fa4;
+$background: #171c24;
+$text-color: #ffffff;
+$link-color: #90cdf4;
+
+// Navbar Styles
+$navbar-background-color: $primary;
+$navbar-text-color: $text-color;
+$navbar-link-color: $link-color;
+$navbar-link-hover-color: lighten($link-color, 10%);
+
+// Button Styles
+$button-background-color: $secondary;
+$button-text-color: $text-color;
+$button-hover-background-color: darken($secondary, 10%);
+$button-hover-text-color: lighten($text-color, 10%);
+
+// Card Styles
+$card-background-color: darken($background, 10%);
+$card-text-color: $text-color;
+$card-border-color: darken($background, 20%);
+
+// Input Styles
+$input-background-color: lighten($background, 5%);
+$input-border-color: darken($background, 10%);
+$input-text-color: $text-color;
+$input-placeholder-color: lighten($text-color, 40%);
+
+// Alert Styles
+$alert-background-color: darken($background, 5%);
+$alert-text-color: $text-color;
+
+$alert-border-color: darken($background, 10%);
+
+
+// Additional Custom Styles
+.my-custom-class {
+  color: #ff0000;
+  background-color: #0000ff;
+  border: 1px solid #00ff00;
+}

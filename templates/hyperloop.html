@@ -57,36 +57,20 @@
       </div>
     </div>
   </form>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Add event listener to the "Start Hyperloop" button
+      var hyperloopButton = document.getElementById('hyperloop-button');
+      hyperloopButton.addEventListener('click', startHyperloop);
+
+      // Call the updateProgress function initially to start updating the progress
+      updateProgress('{{ status_url }}');
+    });
+  </script>
 {% endblock %}
 
-<script>
-  // Call this when the "Start Hyperloop" button is clicked
-  function startHyperloop() {
-    $.ajax({
-      type: 'POST',
-      url: '/start_hyperloop',
-      data: $('form').serialize(),  // assuming your prompt, expected output, etc. are in a form
-      success: function(data, status, request) {
-        statusUrl = request.getResponseHeader('Location');
-        updateProgress(statusUrl);
-      },
-      error: function() {
-        alert('Unexpected error');
-      }
-    });
-  }
-
-  function updateProgress(statusUrl) {
-    $.getJSON(statusUrl, function(data) {
-      // Update your progress fields with data.iteration and data.similarity
-      // If the task is still running, call updateProgress again after a delay
-      if (data.state == 'PROGRESS') {
-        setTimeout(function() {
-          updateProgress(statusUrl);
-        }, 2000);
-      }
-    });
-  }
-</script>
 
 

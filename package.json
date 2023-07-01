@@ -1,0 +1,37 @@
+{
+  "name": "robotgpt",
+  "version": "1.0.0",
+  "description": "Automated interaction with AI models.",
+  "main": "sass/main.scss",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "robot tests",
+    "css-build": "node-sass --omit-source-map-url sass/light.scss static/css/light.css && node-sass --omit-source-map-url sass/dark.scss static/css/dark.css",
+    "css-watch": "npm run css-build -- --watch",
+    "start": "npm run css-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Huell-Howitzer/robotgpt.git"
+  },
+  "keywords": [
+    "robot",
+    "automated",
+    "chatgpt",
+    "ai",
+    "openai"
+  ],
+  "author": "Ryan M. Howell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Huell-Howitzer/robotgpt/issues"
+  },
+  "homepage": "https://github.com/Huell-Howitzer/robotgpt#readme",
+  "devDependencies": {
+    "bulma": "^0.9.4",
+    "node-sass": "^9.0.0"
+  }
+}

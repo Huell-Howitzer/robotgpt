@@ -1,0 +1,131 @@
+// Import the Bulma base styles
+@import 'bulma';
+
+// Customize the Bulma variables for the light theme
+
+// Colors
+$primary: #3273dc;
+$link: $primary;
+$info: #209cee;
+$success: #23d160;
+$warning: #ffdd57;
+$danger: #ff3860;
+$background: #f5f5f5;
+$text: #333;
+$border: #dbdbdb;
+
+// Typography
+$family-primary: 'Roboto', sans-serif;
+$family-secondary: 'Open Sans', sans-serif;
+$size-normal: 1rem;
+$size-small: 0.875rem;
+$size-medium: 1.25rem;
+$size-large: 1.5rem;
+$heading-size: 1.5rem;
+$heading-color: $text;
+$heading-line-height: 1.2;
+
+// Spacing
+$gap: 1.5rem;
+$padding: 1rem;
+$margin: 1rem;
+
+// Borders
+$border-width: 1px;
+$border-radius: 0.25rem;
+$border-color: $border;
+
+// Form inputs
+$input-radius: $border-radius;
+$input-focus-border-color: lighten($primary, 25%);
+
+// Buttons
+$button-radius: $border-radius;
+$button-hover-background: lighten($primary, 10%);
+
+// Navbar
+$navbar-background: $background;
+$navbar-text: $primary;
+
+// Cards
+$card-background: $background;
+$card-border-radius: $border-radius;
+$card-box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+$card-header-background: $primary;
+$card-header-text: white;
+$card-footer-background: $background;
+
+// Overrides and additional custom styles
+
+// Navbar
+.navbar {
+  background-color: $navbar-background;
+  color: $navbar-text;
+  border-bottom: $border-width solid $border-color;
+
+  .navbar-item {
+    color: $navbar-text;
+
+    &:hover {
+      color: darken($navbar-text, 10%);
+    }
+  }
+}
+
+// Buttons
+.button {
+  border-radius: $button-radius;
+  padding: $padding;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover,
+  &:focus {
+    background-color: $button-hover-background;
+  }
+}
+
+// Form inputs
+.input,
+.textarea {
+  border-radius: $input-radius;
+
+  &:focus {
+    border-color: $input-focus-border-color;
+    box-shadow: 0 0 0 0.125em $input-focus-border-color;
+  }
+}
+
+// Cards
+.card {
+  background-color: $card-background;
+  border-radius: $card-border-radius;
+  box-shadow: $card-box-shadow;
+  overflow: hidden;
+
+  .card-header {
+    background-color: $card-header-background;
+    color: $card-header-text;
+    padding: $padding;
+  }
+
+  .card-content {
+    padding: $padding;
+  }
+
+  .card-footer {
+    background-color: $card-footer-background;
+    padding: $padding;
+  }
+}
+
+// Typography
+.title {
+  font-size: $heading-size;
+  color: $heading-color;
+  line-height: $heading-line-height;
+}
+
+.subtitle {
+  font-size: $size-medium;
+  color: $text;
+}

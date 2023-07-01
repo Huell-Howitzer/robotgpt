@@ -1,110 +1,103 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>{% block title %} {% endblock %}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-
-  <!-- Add your Font Awesome kit -->
-  <script src="https://kit.fontawesome.com/ed2d1d262f.js" crossorigin="anonymous"></script>
-
-  <style>
-    .sidenav {
-      height: 100%;
-      width: 240px;
-      position: fixed;
-      z-index: 1;
-      top: 0;
-      left: 0;
-      background-color: #f5f5f5;
-      overflow-x: hidden;
-      padding-top: 60px;
-    }
-
-    .sidenav a {
-      padding: 8px 8px 8px 32px;
-      text-decoration: none;
-      font-size: 18px;
-      color: #818181;
-      display: block;
-    }
-
-    .sidenav a:hover {
-      color: #000;
-    }
-
-    .main {
-      margin-left: 240px;
-      padding: 0px 10px;
-    }
-
-    /* Add a style for the bug icon */
-    .debug-icon {
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 1000;  /* Make sure the icon is above other elements */
-    }
-  </style>
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" id="theme-style">
+    <script src="https://kit.fontawesome.com/ed2d1d262f.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block theme_css %}
+        {% if theme == 'light' %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/light.css') }}">
+        {% elif theme == 'dark' %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+        {% else %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/light.css') }}">
+        {% endif %}
+    {% endblock %}
 </head>
-<body>
-  <!-- Add the bug icon -->
-  {% if debug %}
-    <i class="fas fa-bug debug-icon"></i>
-  {% endif %}
 
-  <div id="app">
+<body>
+<!-- Add the bug icon -->
+{% if debug %}
+    <i class="fas fa-bug debug-icon"></i>
+{% endif %}
+
+<div id="app">
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-      <!-- Navbar content goes here -->
+        <!-- Navbar content goes here -->
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <span class="icon"><i class="fas fa-robot"></i></span>
+                <span>RobotGPT</span>
+            </a>
+            <a class="navbar-item" href="/hyperloop">
+                <span class="icon"><i class="fas fa-rocket"></i></span>
+                <span>Hyperloop</span>
+            </a>
+        </div>
     </nav>
     <section class="section">
-      <div class="columns">
-        <div class="column is-2">
-          <aside class="sidenav">
-            <p class="menu-label">Navigation</p>
-            <ul class="menu-list">
-              <li>
-                <a href="/">
-                  <span class="icon"><i class="fas fa-home"></i></span> Home
-                </a>
-              </li>
-              <li>
-                <a href="/run">
-                  <span class="icon"><i class="fas fa-play"></i></span> Program Runner
-                </a>
-              </li>
-              <li>
-                <a href="/robot_framework/reports/report" target="_blank">
-                  <span class="icon"><i class="fas fa-chart-bar"></i></span> Reports
-                </a>
-              </li>
-              <li>
-                <a href="/about">
-                  <span class="icon"><i class="fas fa-info"></i></span> About
-                </a>
-              </li>
-              <li>
-                <a href="{{ url_for('serve_docs', filename='index.html') }}">
-                    <span class="icon"><i class="fas fa-book"></i></span> Documentation
-                </a>
-              </li>
-              <!-- Add the following menu item for the TTS app -->
-              <li>
-                <a href="/tts">
-                  <span class="icon"><i class="fas fa-volume-up"></i></span> Text-to-Speech
-                </a>
-              </li>
-            </ul>
-          </aside>
+        <div class="columns">
+            <div class="column is-2">
+                <aside class="sidenav">
+                    <p class="menu-label">Navigation</p>
+                    <ul class="menu-list">
+                        <li>
+                            <a href="/">
+                                <span class="icon"><i class="fas fa-home"></i></span> Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/run">
+                                <span class="icon"><i class="fas fa-play"></i></span> Program Runner
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/robot_framework/reports/report" target="_blank">
+                                <span class="icon"><i class="fas fa-chart-bar"></i></span> Reports
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/about">
+                                <span class="icon"><i class="fas fa-info"></i></span> About
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('serve_docs', filename='index.html') }}">
+                                <span class="icon"><i class="fas fa-book"></i></span> Documentation
+                            </a>
+                        </li>
+                        <!-- Add the following menu item for the TTS app -->
+                        <li>
+                            <a href="/tts">
+                                <span class="icon"><i class="fas fa-volume-up"></i></span> Text-to-Speech
+                            </a>
+                        </li>
+                        <!-- Add the menu item for Hyperloop -->
+                        <li>
+                            <a href="/hyperloop">
+                                <span class="icon"><i class="fas fa-rocket"></i></span> Hyperloop
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/settings">
+                                <span class="icon"><i class="fas fa-cog"></i></span> Settings
+                            </a>
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="column is-10">
+                <div class="container">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
-        <div class="column is-10
-          <div class="container">
-            {% block content %}
-            {% endblock %}
-          </div>
-        </div>
-      </div>
     </section>
-  </div>
+</div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
+

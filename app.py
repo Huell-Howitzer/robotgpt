@@ -80,8 +80,8 @@ def hyperloop():
         prompt = request.form.get("prompt")
         expected_output = request.form.get("expected_output")
         similarity_threshold = float(request.form.get("similarity_threshold"))
-        similarity=0
-        iteration_limit = 100  # Set the limit for maximum iterations
+        similarity = 0
+        iteration_limit = 50  # Set the limit for maximum iterations
         iteration_count = 0
         while similarity < similarity_threshold and iteration_count < iteration_limit:
             iteration_count += 1
@@ -106,20 +106,17 @@ def hyperloop():
             # Create a new AI Model response that compares the desired text to the actual output and the similarity score then provides feedback to the model that is providing the code.
             headers = {
                 "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
-                "Content-Type" : "application/json",
+                "Content-Type": "application/json",
             }
             messages = [
-                {"role"   : "system",
-                 "content": f"You are assisting another agent. They are attempting to solve this puzzle: {prompt}"},
+                {"role": "system", "content": f"You are assisting another agent. They are attempting to solve this puzzle: {prompt}"},
                 {"role": "system", "content": f"They produced the following output: {extracted_code}"},
                 {"role": "system", "content": f"This code when ran produces the following output: {actual_output}"},
                 {"role": "system", "content": f"The code should produce the following output: {expected_output}"},
-                {"role"   : "system",
-                 "content": f"When comparing the desired text to the actual output, the similarity score is: {similarity}%."},
-                {"role"   : "system", "content": f"Please provide feedback to the agent to help them meet the goal of having matching outputs. "},
-                {"role"   : "system", "content": f"Please communicate with the agent in the first-person"},
-                {"role"   : "system", "content": f"Make sure you provide them with the prompt: {prompt} and the expected output: {expected_output}"},
-
+                {"role": "system", "content": f"When comparing the desired text to the actual output, the similarity score is: {similarity}%."},
+                {"role": "system", "content": f"Please provide feedback to the agent to help them meet the goal of having matching outputs. "},
+                {"role": "system", "content": f"Please communicate with the agent in the first-person"},
+                {"role": "system", "content": f"Make sure you provide them with the prompt: {prompt} and the expected output: {expected_output}"},
             ]
             # Mr. Pink's response handling
             try:
@@ -127,9 +124,9 @@ def hyperloop():
                     "https://api.openai.com/v1/chat/completions",
                     headers=headers,
                     json={
-                        "model"      : "gpt-3.5-turbo-16k-0613",
-                        "messages"   : messages,
-                        "max_tokens" : 7050,
+                        "model": "gpt-3.5-turbo-16k-0613",
+                        "messages": messages,
+                        "max_tokens": 7050,
                         "temperature": 0.9,
                     },
                 )
@@ -138,8 +135,15 @@ def hyperloop():
                 print(f"Mr. Pink: {mr_pink_response_data}")
                 mr_pink_output = mr_pink_response_data["choices"][0]["message"]["content"]
                 chatgpt_output = mr_pink_output
+                print(f"Iteration: {iteration_count}")
+                print(f"Similarity: {similarity}%")
+                print(f"Generated Code:\n{generated_code}")
+                print(f"Actual Output:\n{actual_output}")
             except Exception as e:
+                print(f"Failed to get response from Mr. Pink... Error: {str(e)}")
                 return render_template("hyperloop.html", error=f"Failed to get response from Mr. Pink... Error: {str(e)}")
+
+
 
         return render_template(
             "hyperloop.html",
@@ -157,6 +161,8 @@ def hyperloop():
 
     else:
         return jsonify({"error": "Invalid request method."})
+
+
 
 @app.route("/run", methods=["GET", "POST"])
 def run():

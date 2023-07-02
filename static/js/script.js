@@ -24,3 +24,22 @@ function updateProgress(statusUrl) {
     }
   });
 }
+// Get the side nav and content elements
+const sideNav = document.querySelector(".side-nav");
+const content = document.querySelector(".content");
+
+// Add event listeners for mouseover and mouseout
+sideNav.addEventListener("mouseover", expandSideNav);
+sideNav.addEventListener("mouseout", collapseSideNav);
+
+// Function to expand the side nav
+function expandSideNav() {
+  sideNav.classList.add("expanded");
+  content.classList.add("expanded");
+}
+
+// Function to collapse the side nav
+function collapseSideNav() {
+  sideNav.classList.remove("expanded");
+  content.classList.remove("expanded");
+}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title">OpenAI Image Generation</h1>
+            <form method="POST" action="/generate_images">
+                <div class="field">
+                    <label class="label">Enter a prompt:</label>
+                    <div class="control">
+                        <input class="input" type="text" name="prompt" id="prompt" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Image Size:</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="image_size">
+                                {% for size in sizes %}
+                                    <option value="{{ size }}">{{ size }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Number of Images:</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="num_images">
+                                {% for i in range(1, 11) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary" type="submit">Generate Images</button>
+                    </div>
+                </div>
+            </form>
+            <div class="tile is-ancestor">
+                {% for image_url, image_size in image_data %}
+                    <div class="tile is-parent">
+                        <div class="tile is-child box">
+                            <figure class="image is-square">
+                                <img src="{{ image_url }}" width="{{ image_size[0] }}" height="{{ image_size[1] }}" alt="Generated Image">
+                            </figure>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

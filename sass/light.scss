@@ -1,3 +1,8 @@
+@charset "utf-8";
+
+// Import a Google Font
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+
 // Set your brand colors
 $purple: #8A4D76;
 $pink: #FA7C91;
@@ -7,12 +12,16 @@ $beige-lighter: #EFF0EB;
 
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
+$fullhd-enabled: false;
 $grey-dark: $brown;
 $grey-light: $beige-light;
-$primary: $purple;
 $link: $pink;
+$primary: $purple;
+$side-menu-width: 300px;
+$navbar-height: 3.25rem;
+$body-padding: 1.5rem;
+$title-color: $purple;
 $widescreen-enabled: false;
-$fullhd-enabled: false;
 
 // Update some of Bulma's component variables
 $body-background-color: $beige-lighter;
@@ -20,12 +29,6 @@ $control-border-width: 2px;
 $input-border-color: transparent;
 $input-shadow: none;
 
-// Adjust side nav appearance
-$navbar-width: 300px; // Increase the width of the side nav
-
-// Adjust text size
-$title-size-1: 2.5rem; // Increase the size of h1 title
-$title-size-2: 2rem; // Increase the size of h2 title
 
 // Import only what you need from Bulma
 @import "../node_modules/bulma/sass/utilities/_all.sass";

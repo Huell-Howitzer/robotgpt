@@ -37,8 +37,8 @@ db.init_db()
 
 
 # Check if secret key is set in environment variable
-if 'SECRET_KEY' in os.environ:
-    app.secret_key = os.environ['SECRET_KEY']
+if "SECRET_KEY" in os.environ:
+    app.secret_key = os.environ["SECRET_KEY"]
 else:
     # Generate a random secret key if not set in environment variable
     app.secret_key = key_utils.generate_secret_key()
@@ -60,35 +60,36 @@ def index():
 from tasks import hyperloop
 
 
-@app.route('/start_hyperloop', methods=['POST'])
+@app.route("/start_hyperloop", methods=["POST"])
 def start_hyperloop():
     task = hyperloop.apply_async(
-        args=[request.form['prompt'], request.form['expected_output'], request.form['similarity_threshold']])
-    return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
+        args=[
+            request.form["prompt"],
+            request.form["expected_output"],
+            request.form["similarity_threshold"],
+        ]
+    )
+    return jsonify({}), 202, {"Location": url_for("taskstatus", task_id=task.id)}
 
 
-@app.route('/status/<task_id>')
+@app.route("/status/<task_id>")
 def taskstatus(task_id):
     task = hyperloop.AsyncResult(task_id)
-    if task.state == 'PENDING':
+    if task.state == "PENDING":
+        response = {"state": task.state, "iteration": 0, "similarity": 0}
+    elif task.state != "FAILURE":
         response = {
-            'state'     : task.state,
-            'iteration' : 0,
-            'similarity': 0
-        }
-    elif task.state != 'FAILURE':
-        response = {
-            'state'     : task.state,
-            'iteration' : task.info.get('iteration', 0),
-            'similarity': task.info.get('similarity', 0)
+            "state": task.state,
+            "iteration": task.info.get("iteration", 0),
+            "similarity": task.info.get("similarity", 0),
         }
     else:
         # task failed
         response = {
-            'state'     : task.state,
-            'iteration' : task.info.get('iteration', 0),
-            'similarity': task.info.get('similarity', 0),
-            'status'    : str(task.info)  # this is the exception raised
+            "state": task.state,
+            "iteration": task.info.get("iteration", 0),
+            "similarity": task.info.get("similarity", 0),
+            "status": str(task.info),  # this is the exception raised
         }
     return jsonify(response)
 
@@ -112,13 +113,17 @@ def hyperloop():
         iteration_count = 0
         while similarity < similarity_threshold and iteration_count < iteration_limit:
             iteration_count += 1
-            generated_code = engine.generate_code(prompt, expected_output, similarity_threshold)
+            generated_code = engine.generate_code(
+                prompt, expected_output, similarity_threshold
+            )
             # Save the prompt and expected output to the database
             prompt_tokens = len(nltk.word_tokenize(prompt))
             # Generate the code using the prompt and expected output
             completion_tokens = len(nltk.word_tokenize(generated_code)) - prompt_tokens
             total_tokens = prompt_tokens + completion_tokens
-            mr_poop_response = engine.handle_request(prompt, expected_output, similarity_threshold)
+            mr_poop_response = engine.handle_request(
+                prompt, expected_output, similarity_threshold
+            )
             print("Mr. Poop:")
             print(mr_poop_response)
             response_id = mr_poop_response["id"]
@@ -133,21 +138,41 @@ def hyperloop():
             # Create a new AI Model response that compares the desired text to the actual output and the similarity score then provides feedback to the model that is providing the code.
             headers = {
                 "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
-                "Content-Type" : "application/json",
+                "Content-Type": "application/json",
             }
             messages = [
-                {"role"   : "system",
-                 "content": f"You are assisting another agent. They are attempting to solve this puzzle: {prompt}"},
-                {"role": "system", "content": f"They produced the following output: {extracted_code}"},
-                {"role": "system", "content": f"This code when ran produces the following output: {actual_output}"},
-                {"role": "system", "content": f"The code should produce the following output: {expected_output}"},
-                {"role"   : "system",
-                 "content": f"When comparing the desired text to the actual output, the similarity score is: {similarity}%."},
-                {"role"   : "system",
-                 "content": f"Please provide feedback to the agent to help them meet the goal of having matching outputs. "},
-                {"role": "system", "content": f"Please communicate with the agent in the first-person"},
-                {"role"   : "system",
-                 "content": f"Make sure you provide them with the prompt: {prompt} and the expected output: {expected_output}"},
+                {
+                    "role": "system",
+                    "content": f"You are assisting another agent. They are attempting to solve this puzzle: {prompt}",
+                },
+                {
+                    "role": "system",
+                    "content": f"They produced the following output: {extracted_code}",
+                },
+                {
+                    "role": "system",
+                    "content": f"This code when ran produces the following output: {actual_output}",
+                },
+                {
+                    "role": "system",
+                    "content": f"The code should produce the following output: {expected_output}",
+                },
+                {
+                    "role": "system",
+                    "content": f"When comparing the desired text to the actual output, the similarity score is: {similarity}%.",
+                },
+                {
+                    "role": "system",
+                    "content": f"Please provide feedback to the agent to help them meet the goal of having matching outputs. ",
+                },
+                {
+                    "role": "system",
+                    "content": f"Please communicate with the agent in the first-person",
+                },
+                {
+                    "role": "system",
+                    "content": f"Make sure you provide them with the prompt: {prompt} and the expected output: {expected_output}",
+                },
             ]
             # Mr. Pink's response handling
             try:
@@ -155,16 +180,18 @@ def hyperloop():
                     "https://api.openai.com/v1/chat/completions",
                     headers=headers,
                     json={
-                        "model"      : "gpt-3.5-turbo-16k-0613",
-                        "messages"   : messages,
-                        "max_tokens" : 7050,
+                        "model": "gpt-3.5-turbo-16k-0613",
+                        "messages": messages,
+                        "max_tokens": 7050,
                         "temperature": 0.9,
                     },
                 )
                 mr_pink_response.raise_for_status()  # raises exception for HTTP errors
                 mr_pink_response_data = mr_pink_response.json()
                 print(f"Mr. Pink: {mr_pink_response_data}")
-                mr_pink_output = mr_pink_response_data["choices"][0]["message"]["content"]
+                mr_pink_output = mr_pink_response_data["choices"][0]["message"][
+                    "content"
+                ]
                 chatgpt_output = mr_pink_output
                 print(f"Iteration: {iteration_count}")
                 print(f"Similarity: {similarity}%")
@@ -172,8 +199,10 @@ def hyperloop():
                 print(f"Actual Output:\n{actual_output}")
             except Exception as e:
                 print(f"Failed to get response from Mr. Pink... Error: {str(e)}")
-                return render_template("hyperloop.html",
-                                       error=f"Failed to get response from Mr. Pink... Error: {str(e)}")
+                return render_template(
+                    "hyperloop.html",
+                    error=f"Failed to get response from Mr. Pink... Error: {str(e)}",
+                )
 
         return render_template(
             "hyperloop.html",
@@ -183,15 +212,59 @@ def hyperloop():
             generated_code=generated_code,
             code_output=actual_output,
             similarity=similarity,
-            iteration=iteration_count
+            iteration=iteration_count,
         )
 
     elif request.method == "GET":
         # Handle GET request
-        return render_template("hyperloop.html", api_key=api_key, prompt="", expected_output="", generated_code="",
-                               code_output="", similarity=None)
+        return render_template(
+            "hyperloop.html",
+            api_key=api_key,
+            prompt="",
+            expected_output="",
+            generated_code="",
+            code_output="",
+            similarity=None,
+        )
     else:
         return jsonify({"error": "Invalid request method."})
+
+
+# Image size options
+IMAGE_SIZES = {"256x256": (256, 256), "512x512": (512, 512), "1024x1024": (1024, 1024)}
+
+
+@app.route("/generate_images", methods=["GET", "POST"])
+def generate_images():
+    if request.method == "POST":
+        prompt = request.form["prompt"]
+        image_size = request.form["image_size"]
+        num_images = int(request.form["num_images"])
+        image_data = get_image_data(prompt, image_size, num_images)
+        return render_template(
+            "generate_images.html", image_data=image_data, sizes=IMAGE_SIZES.keys()
+        )
+    else:
+        return render_template("generate_images.html", sizes=IMAGE_SIZES.keys())
+
+
+def get_image_data(prompt, image_size, num_images):
+    print("Inside get_image_data()")
+    print(f"Prompt: {prompt}")
+    print(f"Image Size: {image_size}")
+    print(f"Number of Images: {num_images}")
+    response = openai.Image.create(prompt=prompt, n=num_images, size=image_size)
+    print(f"OpenAI Response: {response}")
+
+    if "data" in response and len(response["data"]) > 0:
+        image_data = []
+        for item in response["data"]:
+            image_url = item["url"]
+            image_data.append((image_url, IMAGE_SIZES[image_size]))
+        return image_data
+    else:
+        print("Error: Image data not found in the response.")
+        return []
 
 
 @app.route("/run", methods=["GET", "POST"])
@@ -215,7 +288,9 @@ def run():
         try:
             completion_tokens = len(nltk.word_tokenize(generated_code)) - prompt_tokens
         except Exception as e:
-            return render_template("run.html", error="Failed to generate code... Please try again.")
+            return render_template(
+                "run.html", error="Failed to generate code... Please try again."
+            )
 
         # Calculate the total number of tokens
         total_tokens = prompt_tokens + completion_tokens
@@ -255,17 +330,30 @@ def run():
                     api_response=response,  # pass the entire response dictionary as a single argument
                 )
 
-                return render_template("run.html", message="Code generated and saved to database.",
-                                       generated_code=generated_code, actual_output=actual_output,
-                                       similarity=similarity, api_key=api_key)
+                return render_template(
+                    "run.html",
+                    message="Code generated and saved to database.",
+                    generated_code=generated_code,
+                    actual_output=actual_output,
+                    similarity=similarity,
+                    api_key=api_key,
+                )
             else:
-
-                return render_template("run.html", message="Code generated but did not meet similarity threshold.",
-                                       generated_code=generated_code, actual_output=actual_output,
-                                       similarity=similarity, api_key=api_key)
+                return render_template(
+                    "run.html",
+                    message="Code generated but did not meet similarity threshold.",
+                    generated_code=generated_code,
+                    actual_output=actual_output,
+                    similarity=similarity,
+                    api_key=api_key,
+                )
 
         else:
-            return render_template("run.html", error="Failed to generate code. Please try again.", api_key=api_key)
+            return render_template(
+                "run.html",
+                error="Failed to generate code. Please try again.",
+                api_key=api_key,
+            )
 
     elif request.method == "GET":
         # Handle GET request
@@ -286,7 +374,13 @@ def get_formatted_code():
     try:
         # Run the engine/main.py script and capture the output
         output = subprocess.check_output(
-            ["python", "engine/main.py", prompt_file, expected_output, similarity_threshold]
+            [
+                "python",
+                "engine/main.py",
+                prompt_file,
+                expected_output,
+                similarity_threshold,
+            ]
         )
 
         # Extract the code from the output
@@ -338,13 +432,13 @@ def about():
     return "About Page"
 
 
-@app.route('/settings', methods=['GET', 'POST'])
+@app.route("/settings", methods=["GET", "POST"])
 def settings():
-    if request.method == 'POST':
-        theme = request.form.get('theme')
-        session['theme'] = theme  # Update the theme in the session
-    theme = session['theme']
-    return render_template('settings.html', theme=theme)
+    if request.method == "POST":
+        theme = request.form.get("theme")
+        session["theme"] = theme  # Update the theme in the session
+    theme = session["theme"]
+    return render_template("settings.html", theme=theme)
 
 
 def allowed_file(filename):
@@ -388,8 +482,8 @@ def process_audio():
 
 @app.before_request
 def set_theme():
-    if 'theme' not in session:
-        session['theme'] = 'light'  # Set the default theme to 'light'
+    if "theme" not in session:
+        session["theme"] = "light"  # Set the default theme to 'light'
 
 
 if __name__ == "__main__":

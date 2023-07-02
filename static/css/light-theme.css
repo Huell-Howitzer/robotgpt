@@ -1,0 +1,52 @@
+/*
+Error: File to import not found or unreadable: bulma.
+        on line 2 of light-theme.scss
+
+1: // Import the Bulma base styles
+2: @import 'bulma';
+3: 
+4: // Customize the Bulma variables for the light theme
+5: 
+6: // Colors
+7: $primary: #3273dc;
+
+Backtrace:
+light-theme.scss:2
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/import_node.rb:67:in `rescue in import'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/import_node.rb:44:in `import'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/import_node.rb:28:in `imported_file'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/import_node.rb:37:in `css_import?'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:310:in `visit_import'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/base.rb:36:in `visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/stack.rb:79:in `block in with_base'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/stack.rb:135:in `with_frame'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/stack.rb:79:in `with_base'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:158:in `visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/base.rb:52:in `map'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/base.rb:36:in `visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:157:in `visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/visitors/perform.rb:10:in `visit'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/root_node.rb:36:in `css_tree'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/tree/root_node.rb:29:in `render_with_sourcemap'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/engine.rb:389:in `_render_with_sourcemap'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/engine.rb:307:in `render_with_sourcemap'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/exec/sass_scss.rb:387:in `run'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/exec/sass_scss.rb:63:in `process_result'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/exec/base.rb:50:in `parse'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/lib/sass/exec/base.rb:18:in `parse!'
+/home/ryan-howell/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/sass-3.7.4/bin/scss:13:in `<top (required)>'
+/home/ryan-howell/.rbenv/versions/3.2.2/bin/scss:25:in `load'
+/home/ryan-howell/.rbenv/versions/3.2.2/bin/scss:25:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: File to import not found or unreadable: bulma.\A         on line 2 of light-theme.scss\A \A 1: // Import the Bulma base styles\A 2: @import 'bulma';\A 3: \A 4: // Customize the Bulma variables for the light theme\A 5: \A 6: // Colors\A 7: $primary: #3273dc;"; }

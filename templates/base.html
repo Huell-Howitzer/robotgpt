@@ -23,7 +23,8 @@
             z-index: 1;
             top: 0;
             left: 0;
-            background-color: #111;
+            background-color: #3e8ed0;
+            text-color: #fff;
             overflow-x: hidden;
             padding-top: 4rem;
             transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
@@ -162,7 +163,7 @@
 <div id="sideNavigation" class="sidenav">
     <a href="#" class="close-btn"><span class="icon"><i class="fa-sharp fa-light fa-circle-xmark"></i></span></a>
     <a href="/"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="/run"><span class="icon"><i class="fas fa-play"></i></span>Program Runner</a>
+    <a href="/run"><span class="icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>RegEx Tool</a>
     <a href="/robot_framework/reports/report" target="_blank"><span class="icon"><i class="fas fa-chart-bar"></i></span>Reports</a>
     <a href="/about"><span class="icon"><i class="fas fa-info"></i></span>About</a>
     <a href="{{ url_for('serve_docs', filename='index.html') }}"><span class="icon"><i class="fas fa-book"></i></span>
@@ -170,6 +171,7 @@
     <a href="/tts"><span class="icon"><i class="fas fa-volume-up"></i></span>Text-to-Speech</a>
     <a href="/hyperloop"><span class="icon"><i class="fas fa-rocket"></i></span>Hyperloop</a>
     <a href="/generate_images"><span class="icon"><i class="fa-sharp fa-light fa-image"></i></span>Image Generator</a>
+    <a href="/image_classification"><span class="icon"><i class="fa-duotone fa-magnifying-glass"></i></span>Image Classification</a>
     <a href="/settings"><span class="icon"><i class="fas fa-cog"></i></span>Settings</a>
 </div>
 

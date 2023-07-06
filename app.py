@@ -5,6 +5,11 @@ import time
 import subprocess
 import sys
 from io import StringIO
+import base64
+import base64
+from PIL import Image
+import io
+import json
 
 from flask import session
 
@@ -109,7 +114,7 @@ def hyperloop():
         expected_output = request.form.get("expected_output")
         similarity_threshold = float(request.form.get("similarity_threshold"))
         similarity = 0
-        iteration_limit = 10  # Set the limit for maximum iterations
+        iteration_limit = 100  # Set the limit for maximum iterations
         iteration_count = 0
         while similarity < similarity_threshold and iteration_count < iteration_limit:
             iteration_count += 1
@@ -478,6 +483,62 @@ def process_audio():
             return jsonify({"error": str(e)})
 
     return jsonify({"error": "Invalid file"})
+
+
+@app.route("/image_classification", methods=["GET", "POST"])
+def image_classification():
+    if request.method == "POST":
+        # Check if an image file was uploaded
+        if "image_file" not in request.files:
+            return "No image file uploaded."
+
+        image_file = request.files["image_file"]
+
+        # Check if the file is empty
+        if image_file.filename == "":
+            return "No image file selected."
+
+        # Read the image file data
+        image_data = image_file.read()
+
+        # Perform image classification using OpenAI
+        classification = classify_image(image_data)
+
+        # Render the classification result in a template
+        return render_template(
+            "image_classification.html", classification=classification
+        )
+
+    return render_template("image_classification.html")
+
+
+def classify_image(image_data):
+    # Convert image to JPEG format if necessary
+    image = Image.open(io.BytesIO(image_data))
+    if image.format != "JPEG":
+        # Convert to JPEG by re-saving the image
+        with io.BytesIO() as output:
+            image.convert("RGB").save(output, format="JPEG")
+            image_data = output.getvalue()
+
+    # Encode the image data using base64
+    encoded_image = base64.b64encode(image_data).decode("utf-8")
+
+    # Use OpenAI to classify the image
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a machine that interprets image data.",
+            },
+            {
+                "role": "user",
+                "content": f"Can you tell me what is in this image? {encoded_image}",
+            },
+        ],
+    )
+    print(response)
 
 
 @app.before_request

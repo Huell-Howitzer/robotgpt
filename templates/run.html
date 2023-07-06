@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1 class="title">Program Runner</h1>
+  <h1 class="title">RegEx Creator</h1>
   <form method="post" action="/run">
     <div class="field">
-      <label class="label"><i class="fas fa-keyboard"></i> Prompt</label>
+      <label class="label"><i class="fas fa-keyboard"></i> Input</label>
       <div class="control">
         <textarea class="textarea" name="prompt" placeholder="Enter the prompt">{{ prompt }}</textarea>
       </div>

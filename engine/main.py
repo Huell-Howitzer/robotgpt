@@ -105,14 +105,10 @@ class Engine(Database):
                 }
 
                 messages = [
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt},
-                    {
-                        "role": "user",
-                        "content": f"Here is the expected output of the program: {expected_output}",
-                    },
+                    {"role": "system", "content": "You are a helpful assistant and a master of Regular Expressions."},
+                    {"role": "user",
+                     "content": f"Create a Python Regex that will convert: {prompt} into: {expected_output}"}
                 ]
-
                 response = requests.post(
                     "https://api.openai.com/v1/chat/completions",
                     headers=headers,
